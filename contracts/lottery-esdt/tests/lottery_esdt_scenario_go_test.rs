@@ -5,6 +5,31 @@ fn world() -> ScenarioWorld {
 }
 
 #[test]
+fn buy_after_deadline_go() {
+    world().run("scenarios/buy-after-deadline.scen.json");
+}
+
+#[test]
+fn buy_after_sold_out_go() {
+    world().run("scenarios/buy-after-sold-out.scen.json");
+}
+
+#[test]
+fn buy_after_winner_announced_go() {
+    world().run("scenarios/buy-after-winner-announced.scen.json");
+}
+
+#[test]
+fn buy_all_tickets_and_determine_winner_go() {
+    world().run("scenarios/buy-all-tickets-and-determine-winner.scen.json");
+}
+
+#[test]
+fn buy_all_tickets_and_exceed_max_tickets_go() {
+    world().run("scenarios/buy-all-tickets-and-exceed-max-tickets.scen.json");
+}
+
+#[test]
 fn buy_all_tickets_different_accounts_go() {
     world().run("scenarios/buy-all-tickets-different-accounts.scen.json");
 }
@@ -12,6 +37,11 @@ fn buy_all_tickets_different_accounts_go() {
 #[test]
 fn buy_more_tickets_than_allowed_go() {
     world().run("scenarios/buy-more-tickets-than-allowed.scen.json");
+}
+
+#[test]
+fn buy_not_whitelisted_go() {
+    world().run("scenarios/buy-not-whitelisted.scen.json");
 }
 
 #[test]
@@ -65,6 +95,11 @@ fn buy_ticket_wrong_fee_go() {
 }
 
 #[test]
+fn buy_wrong_fee_go() {
+    world().run("scenarios/buy-wrong-fee.scen.json");
+}
+
+#[test]
 fn complex_prize_distribution_go() {
     world().run("scenarios/complex-prize-distribution.scen.json");
 }
@@ -87,6 +122,11 @@ fn determine_winner_same_ticket_holder_go() {
 #[test]
 fn determine_winner_split_prize_pool_go() {
     world().run("scenarios/determine-winner-split-prize-pool.scen.json");
+}
+
+#[test]
+fn init_lottery_esdt_go() {
+    world().run("scenarios/init-lottery-esdt.scen.json");
 }
 
 #[test]
@@ -136,9 +176,12 @@ fn start_limited_tickets_and_fixed_deadline_invalid_deadline_go() {
 
 #[test]
 fn start_limited_tickets_and_fixed_deadline_invalid_ticket_price_arg_go() {
-    world().run(
-        "scenarios/start-limited-tickets-and-fixed-deadline-invalid-ticket-price-arg.scen.json",
-    );
+    world().run("scenarios/start-limited-tickets-and-fixed-deadline-invalid-ticket-price-arg.scen.json");
+}
+
+#[test]
+fn start_lottery_twice_go() {
+    world().run("scenarios/start-lottery-twice.scen.json");
 }
 
 #[test]
@@ -154,4 +197,9 @@ fn start_with_all_options_go() {
 #[test]
 fn start_with_no_options_go() {
     world().run("scenarios/start-with-no-options.scen.json");
+}
+
+#[test]
+fn wrong_start_params_go() {
+    world().run("scenarios/wrong-start-params.scen.json");
 }
