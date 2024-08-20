@@ -5,8 +5,8 @@
             "newAddresses": [
                 {
                     "creatorAddress": "address:OWNER_ADDRESS",
-                    "creatorNonce": "0",
-                    "newAddress": "sc:lottery_esdt"
+                    "creatorNonce": "1",
+                    "newAddress": "sc:lottery-esdt"
                 }
             ]
         },

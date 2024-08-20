@@ -5,8 +5,8 @@
             "newAddresses": [
                 {
                     "creatorAddress": "address:OWNER_ADDRESS",
-                    "creatorNonce": "0",
-                    "newAddress": "sc:lottery_esdt"
+                    "creatorNonce": "1",
+                    "newAddress": "sc:lottery-esdt"
                 }
             ]
         },
@@ -25,17 +25,11 @@
             }
         },
         {
-            "step": "setState",
-            "currentBlockInfo": {
-                "blockTimestamp": "10"
-            }
-        },
-        {
             "step": "scCall",
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x",
@@ -45,7 +39,8 @@
                     "0x010000000000000014",
                     "0x0100000001",
                     "0x01000000024b19",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x0a"
                 ],
                 "gasLimit": "5,000,000"
             },
@@ -59,7 +54,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x74657374",
@@ -69,7 +64,8 @@
                     "0x010000000000000014",
                     "0x0100000001",
                     "0x01000000024b19",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x0a"
                 ],
                 "gasLimit": "5,000,000"
             },
@@ -83,7 +79,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x74657374",
@@ -93,7 +89,8 @@
                     "0x010000000000000014",
                     "0x0100000001",
                     "0x01000000024b19",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x0a"
                 ],
                 "gasLimit": "5,000,000"
             },
@@ -107,7 +104,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x74657374",
@@ -117,7 +114,8 @@
                     "0x010000000000000014",
                     "0x0100000001",
                     "0x01000000024b19",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x0a"
                 ],
                 "gasLimit": "5,000,000"
             },
@@ -131,7 +129,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x74657374",
@@ -141,7 +139,8 @@
                     "0x010000000000000014",
                     "0x0100000001",
                     "0x01000000024b19",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x0a"
                 ],
                 "gasLimit": "5,000,000"
             },
@@ -155,7 +154,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x74657374",
@@ -165,7 +164,8 @@
                     "0x010000000000000000",
                     "0x0100000001",
                     "0x01000000024b19",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x0a"
                 ],
                 "gasLimit": "5,000,000"
             },
@@ -179,7 +179,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x74657374",
@@ -189,7 +189,8 @@
                     "0x010000000005f5e100",
                     "0x0100000001",
                     "0x01000000024b19",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x0a"
                 ],
                 "gasLimit": "5,000,000"
             },
@@ -203,7 +204,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x74657374",
@@ -213,7 +214,8 @@
                     "0x010000000000000014",
                     "0x0100000000",
                     "0x01000000024b19",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x0a"
                 ],
                 "gasLimit": "5,000,000"
             },
@@ -227,7 +229,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x74657374",
@@ -237,7 +239,8 @@
                     "0x010000000000000014",
                     "0x0100000001",
                     "0x01000000023c3c",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x0a"
                 ],
                 "gasLimit": "5,000,000"
             },
@@ -251,7 +254,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x74657374",
@@ -261,8 +264,8 @@
                     "0x010000000000000014",
                     "0x0100000001",
                     "0x01000000024b19",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
-                    "0x32"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x65"
                 ],
                 "gasLimit": "5,000,000"
             },
@@ -276,7 +279,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "to": "sc:lottery_esdt",
+                "to": "sc:lottery-esdt",
                 "function": "start",
                 "arguments": [
                     "0x74657374",
@@ -286,14 +289,39 @@
                     "0x010000000000000014",
                     "0x0100000001",
                     "0x01000000024b19",
-                    "0x01000000024f574e45525f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
-                    "0x32"
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x65"
                 ],
                 "gasLimit": "5,000,000"
             },
             "expect": {
                 "status": "4",
                 "message": "str:The contract can't burn the selected token!"
+            }
+        },
+        {
+            "step": "scCall",
+            "id": "",
+            "tx": {
+                "from": "address:OWNER_ADDRESS",
+                "to": "sc:lottery-esdt",
+                "function": "start",
+                "arguments": [
+                    "0x74657374",
+                    "0x544553542d313233343536",
+                    "0x01",
+                    "0x0100000002",
+                    "0x010000000000000014",
+                    "0x0100000001",
+                    "0x01000000024b19",
+                    "0x010000000246495253545f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5345434f4e445f414444524553535f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f5f",
+                    "0x65"
+                ],
+                "gasLimit": "5,000,000"
+            },
+            "expect": {
+                "status": "4",
+                "message": "str:Invalid burn percentage!"
             }
         }
     ]
