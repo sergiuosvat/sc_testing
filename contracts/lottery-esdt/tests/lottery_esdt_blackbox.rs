@@ -1,12 +1,11 @@
 use multiversx_sc_scenario::imports::*;
 
-
 mod proxy;
 
 const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
 const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
 const SC_ADDRESS: TestSCAddress = TestSCAddress::new("lottery_esdt");
-const CODE_PATH: MxscPath = MxscPath::new("output/lottery_esdt.mxsc.json");
+const CODE_PATH: MxscPath = MxscPath::new("../output/lottery-esdt.mxsc.json");
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();

@@ -1,21 +1,24 @@
 use multiversx_sc_scenario::*;
-use imports::{TestAddress, TokenIdentifier};
+use imports::{MxscPath, TestAddress, TokenIdentifier, EsdtLocalRole, TestSCAddress};
 
 const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
 const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
+const SC_ADDRESS: TestSCAddress = TestSCAddress::new("lottery_esdt");
+const _: MxscPath = MxscPath::new("../output/lottery-esdt.mxsc.json");
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
 
-    let token_id = TokenIdentifier::from_esdt_bytes(&b"BSK-476470"[..]); 
+    let token_id = TokenIdentifier::from_esdt_bytes(&b"BSK-476470"[..]);
 
     blockchain.account(OWNER_ADDRESS).esdt_balance(&token_id, 1000);
     blockchain.account(SECOND_ADDRESS).esdt_balance(&token_id, 1000);
-    
+
     blockchain.register_contract(
         "mxsc:output/lottery-esdt.mxsc.json",
         lottery_esdt::ContractBuilder,
     );
+
     blockchain
 }
 
@@ -217,5 +220,8 @@ fn start_with_no_options_rs() {
 
 #[test]
 fn wrong_start_params_rs() {
-    world().run("scenarios/wrong-start-params.scen.json");
+    let mut world = world();
+    world.set_esdt_local_roles(SC_ADDRESS, b"TEST-123456", &[EsdtLocalRole::Burn]);
+
+    world.run("scenarios/wrong-start-params.scen.json");
 }
