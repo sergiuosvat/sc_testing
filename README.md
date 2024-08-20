@@ -1,7 +1,0 @@
-# Paymaster SC
-
-## Overview
-
-
-
-## Implementation
