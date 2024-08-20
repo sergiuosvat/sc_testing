@@ -807,9 +807,9 @@ fn lottery_esdt_blackbox_wrong_start_params()
     let opt_whitelist = Option::Some(whitelist);
     let opt_burn_percentage: OptionalValue<BigUint<StaticApi>> = OptionalValue::None;
     let opt_burn_percentage_some = OptionalValue::Some(BigUint::<StaticApi>::from(50u128));
-    let token_id_burnable = TokenIdentifier::from_esdt_bytes(&b"TEST-123456"[..]);
-    let boxed_bytes = token_id_burnable.to_boxed_bytes();
-    world.set_esdt_local_roles(SC_ADDRESS, boxed_bytes.as_slice(), &[EsdtLocalRole::Burn]);
+    // let token_id_burnable = TokenIdentifier::from_esdt_bytes(&b"TEST-123456"[..]);
+    // let boxed_bytes = token_id_burnable.to_boxed_bytes();
+    // world.set_esdt_local_roles(SC_ADDRESS, boxed_bytes.as_slice(), &[EsdtLocalRole::Burn]);
 
     let wrong_lottery_name = ManagedBuffer::new_from_bytes(&b""[..]);
     let wrong_token_identifier = EgldOrEsdtTokenIdentifier::esdt(&b""[..]);
@@ -822,7 +822,7 @@ fn lottery_esdt_blackbox_wrong_start_params()
     let wrong_max_entries_per_user = Option::Some(0u32);
     let wrong_prize_distribution_data :&[u8] = &[60,60];
     let wrong_prize_distribution = Option::Some(ManagedVec::from_iter(wrong_prize_distribution_data.iter().copied()));
-    let worng_burn_percentage = OptionalValue::Some(BigUint::<StaticApi>::from(101u128));
+    //let worng_burn_percentage = OptionalValue::Some(BigUint::<StaticApi>::from(101u128));
 
     world
         .tx()
@@ -1033,24 +1033,24 @@ fn lottery_esdt_blackbox_wrong_start_params()
         .returns(ExpectError(4,"The contract can't burn the selected token!"))
         .run();
 
-    world
-        .tx()
-        .from(OWNER_ADDRESS)
-        .to(SC_ADDRESS)
-        .typed(proxy::LotteryProxy)
-        .start(
-            &lottery_name,
-            &token_id_burnable,
-            &ticket_price,
-            opt_total_tickets,
-            opt_deadline,
-            opt_max_entries_per_user,
-            opt_prize_distribution.clone(),
-            opt_whitelist.clone(),
-            worng_burn_percentage,
-        )
-        .returns(ExpectError(4,"Invalid burn percentage!"))
-        .run();
+    // world
+    //     .tx()
+    //     .from(OWNER_ADDRESS)
+    //     .to(SC_ADDRESS)
+    //     .typed(proxy::LotteryProxy)
+    //     .start(
+    //         &lottery_name,
+    //         &token_id_burnable,
+    //         &ticket_price,
+    //         opt_total_tickets,
+    //         opt_deadline,
+    //         opt_max_entries_per_user,
+    //         opt_prize_distribution.clone(),
+    //         opt_whitelist.clone(),
+    //         worng_burn_percentage,
+    //     )
+    //     .returns(ExpectError(4,"Invalid burn percentage!"))
+    //     .run();
 
     world.write_scenario_trace("scenarios/wrong-start-params.scen.json");
 

@@ -3,7 +3,6 @@ use imports::{MxscPath, TestAddress, TokenIdentifier, EsdtLocalRole, TestSCAddre
 
 const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
 const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
-const SC_ADDRESS: TestSCAddress = TestSCAddress::new("lottery_esdt");
 const _: MxscPath = MxscPath::new("../output/lottery-esdt.mxsc.json");
 
 fn world() -> ScenarioWorld {
@@ -220,8 +219,5 @@ fn start_with_no_options_rs() {
 
 #[test]
 fn wrong_start_params_rs() {
-    let mut world = world();
-    world.set_esdt_local_roles(SC_ADDRESS, b"TEST-123456", &[EsdtLocalRole::Burn]);
-
-    world.run("scenarios/wrong-start-params.scen.json");
+    world().run("scenarios/wrong-start-params.scen.json");
 }
