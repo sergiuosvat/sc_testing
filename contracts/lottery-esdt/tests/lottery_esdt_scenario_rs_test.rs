@@ -235,9 +235,5 @@ fn start_with_no_options_rs() {
 
 #[test]
 fn wrong_start_params_rs() {
-    let mut world = world();
-
-    const TOKEN_ID_BURNABLE: &[u8] = b"TEST-123456";
-    world.set_esdt_local_roles(SC_ADDRESS, TOKEN_ID_BURNABLE, &[EsdtLocalRole::Burn]);
-    world.run("scenarios/wrong-start-params.scen.json");
+    world().run("scenarios/wrong-start-params.scen.json");
 }
