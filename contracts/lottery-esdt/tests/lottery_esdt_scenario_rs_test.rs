@@ -1,8 +1,17 @@
 use multiversx_sc_scenario::*;
+use imports::{TestAddress, TokenIdentifier};
+
+const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
+const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
 
+    let token_id = TokenIdentifier::from_esdt_bytes(&b"BSK-476470"[..]); 
+
+    blockchain.account(OWNER_ADDRESS).esdt_balance(&token_id, 1000);
+    blockchain.account(SECOND_ADDRESS).esdt_balance(&token_id, 1000);
+    
     blockchain.register_contract(
         "mxsc:output/lottery-esdt.mxsc.json",
         lottery_esdt::ContractBuilder,

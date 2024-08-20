@@ -3,15 +3,14 @@ use multiversx_sc_scenario::imports::*;
 
 mod proxy;
 
-
+const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
+const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
 const SC_ADDRESS: TestSCAddress = TestSCAddress::new("lottery_esdt");
 const CODE_PATH: MxscPath = MxscPath::new("output/lottery_esdt.mxsc.json");
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
     let token_id = TokenIdentifier::from_esdt_bytes(&b"BSK-476470"[..]); 
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
 
     blockchain.account(OWNER_ADDRESS).esdt_balance(&token_id, 1000);
     blockchain.account(SECOND_ADDRESS).esdt_balance(&token_id, 1000);
@@ -23,7 +22,6 @@ fn world() -> ScenarioWorld {
 #[test]
 fn lottery_esdt_blackbox_init(){
     let mut world = world();
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
 
     world.start_trace();
 
@@ -47,8 +45,6 @@ fn lottery_esdt_blackbox_init(){
 fn lottery_esdt_blackbox_buy_all()
 {
     let mut world = world();
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
 
     world.start_trace();
 
@@ -133,9 +129,6 @@ fn lottery_esdt_blackbox_buy_all()
 fn lottery_esdt_blackbox_buy_after_winner_announced()
 {
     let mut world = world();
-
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
 
     world.start_trace();
 
@@ -229,9 +222,6 @@ fn lottery_esdt_blackbox_buy_after_deadline()
 {
     let mut world = world();
 
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
-
     world.start_trace();
 
     world
@@ -320,9 +310,6 @@ fn lottery_esdt_blackbox_buy_after_sold_out()
 {
     let mut world = world();
 
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
-
     world.start_trace();
 
     world
@@ -409,9 +396,6 @@ fn lottery_esdt_blackbox_buy_not_whitelisted()
 {
     let mut world = world();
 
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
-
     world.start_trace();
 
     world
@@ -488,9 +472,6 @@ fn lottery_esdt_blackbox_buy_wrong_fee()
 {
     let mut world = world();
 
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
-
     world.start_trace();
 
     world
@@ -559,9 +540,6 @@ fn lottery_esdt_blackbox_buy_wrong_fee()
 fn lottery_esdt_blackbox_determine_winner_early()
 {
     let mut world = world();
-
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
 
     world.start_trace();
 
@@ -638,9 +616,6 @@ fn lottery_esdt_blackbox_determine_winner_early()
 fn lottery_esdt_blackbox_buy_all_and_determine_winner()
 {
     let mut world = world();
-
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
 
     world.start_trace();
 
@@ -728,9 +703,6 @@ fn lottery_esdt_blackbox_start_lottery_twice()
 {
     let mut world = world();
 
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
-
     world.start_trace();
 
     world
@@ -806,9 +778,6 @@ fn lottery_esdt_blackbox_start_lottery_twice()
 fn lottery_esdt_blackbox_wrong_start_params()
 {
     let mut world = world();
-
-    const OWNER_ADDRESS: TestAddress = TestAddress::new("OWNER_ADDRESS");
-    const SECOND_ADDRESS: TestAddress = TestAddress::new("SECOND_ADDRESS");
 
     world.start_trace();
 
