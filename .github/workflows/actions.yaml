@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - potlock-sc
   pull_request:
 
 permissions:
