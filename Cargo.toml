@@ -2,6 +2,6 @@
 resolver = "2"
 
 members = [
-    "a",
-    "b",
+    "contracts/lottery-esdt",
+    "contracts/lottery-esdt/meta"
 ]

@@ -1,0 +1,28 @@
+{
+    "steps": [
+        {
+            "step": "setState",
+            "newAddresses": [
+                {
+                    "creatorAddress": "address:OWNER_ADDRESS",
+                    "creatorNonce": "0",
+                    "newAddress": "sc:lottery_esdt"
+                }
+            ]
+        },
+        {
+            "step": "scDeploy",
+            "id": "",
+            "tx": {
+                "from": "address:OWNER_ADDRESS",
+                "contractCode": "mxsc:output/lottery_esdt.mxsc.json",
+                "arguments": [],
+                "gasLimit": "5,000,000"
+            },
+            "expect": {
+                "out": [],
+                "status": "0"
+            }
+        }
+    ]
+}

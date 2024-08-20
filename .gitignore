@@ -11,3 +11,6 @@
 # The mxpy output
 **/output/**
 **/*.interaction.json
+
+#Zone identifier WSL stuff
+*Zone.Identifier
