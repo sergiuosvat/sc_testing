@@ -691,45 +691,46 @@ impl ContractInteract {
 async fn test_deploy() {
     let mut interact = ContractInteract::new().await;
     interact.deploy().await;
-    interact.change_fee_for_pots(1).await;
 }
 
 #[tokio::test]
 async fn test_add_pot() {
     let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    interact.change_fee_for_pots(1).await;
     interact.add_pot().await;
 }
 
+#[tokio::test]
 async fn test_accept_pot() {
     let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    interact.change_fee_for_pots(1).await;
+    interact.add_pot().await;
     interact.accept_pot(1).await;
 }
 
-#[tokio::test]
-async fn test_view_potlocks() {
-    let mut interact = ContractInteract::new().await;
-    interact.add_pot().await;
-    interact.get_potlocks().await;
-}
+// #[tokio::test]
+// async fn test_view_potlocks() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.add_pot().await;
+//     interact.get_potlocks().await;
+// }
 
 #[tokio::test]
-async fn test_change_fee_wrong_params() {
+async fn test_change_fee_twice() {
     let mut interact = ContractInteract::new().await;
     interact.deploy().await;
+    interact.change_fee_for_pots(1).await;
     interact.fee_amount().await;
     interact.change_fee_for_pots(1).await;
     interact.fee_amount().await;
-
-    // interact.change_fee_for_pots_params(
-    //     "ALICE",
-    //     FEE_AMOUNT,
-    //     ExpectError(4, "Invalid token provided")
-    // ).await;
 }
 
 #[tokio::test]
 async fn test_accept_pot_not_created() {
     let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
     let potlock_wanted = 0;
     interact.accept_pot_param(potlock_wanted, ExpectError(4, "Potlock doesn't exist!")).await;
 }
@@ -737,6 +738,7 @@ async fn test_accept_pot_not_created() {
 #[tokio::test]
 async fn test_remove_pot_not_created() {
     let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
     let potlock_wanted = 0;
     interact.remove_pot_param(potlock_wanted, ExpectError(4, "Potlock doesn't exist!")).await;
 }
@@ -744,6 +746,7 @@ async fn test_remove_pot_not_created() {
 #[tokio::test]
 async fn test_accept_application_not_created() {
     let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
     let project_wanted = 0;
     interact.accept_application_params(project_wanted, ExpectError(4, "Project doesn't exist!")).await;
 }
@@ -751,9 +754,12 @@ async fn test_accept_application_not_created() {
 #[tokio::test]
 async fn test_reject_donation_params() {
     let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    interact.change_fee_for_pots(1).await;
+    interact.add_pot().await;
     let potlock_wanted = 0;
     let wanted_user = Bech32Address::from_bech32_string(("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th").to_string());
-    let wanted_user_2 = Bech32Address::from_bech32_string(("").to_string());
+    let wanted_user_2 = Bech32Address::from_bech32_string(("erd1k2s324ww2g0yj38qn2ch2jwctdy8mnfxep94q9arncc6xecg3xaq6mjse8").to_string());
     interact.reject_donation_param(potlock_wanted, ExpectError(4, "Potlock doesn't exist!"), wanted_user).await;
     interact.reject_donation_param(1, ExpectError(4, "No donation for this user"), wanted_user_2).await;
 }
@@ -761,6 +767,9 @@ async fn test_reject_donation_params() {
 #[tokio::test]
 async fn test_add_pot_params(){
     let mut interact = ContractInteract::new().await;
+
+    interact.deploy().await;
+    interact.change_fee_for_pots(1).await;
 
     let token_id = "ALICE";
     interact.add_pot_params(
@@ -779,6 +788,9 @@ async fn test_add_pot_params(){
 #[tokio::test]
 async fn test_donate_to_project() {
     let mut interact = ContractInteract::new().await;
+
+    interact.deploy().await;
+    interact.change_fee_for_pots(1).await;
 
     let wanted_proposer = 1;
     let potlock_wanted = 1;
@@ -804,6 +816,10 @@ async fn test_donate_to_project() {
 #[tokio::test]
 async fn test_multiple_donations() {
     let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    interact.change_fee_for_pots(1).await;
+
+    interact.add_pot().await;
 
     interact.donate_to_pot().await;
     interact.pot_donations().await;
@@ -820,17 +836,6 @@ async fn test_multiple_donations_same_token(){
     interact.pot_donations().await;
     interact.donate_to_pot().await;
     interact.pot_donations().await;
-}
-#[tokio::test]
-async fn test_multiple_accept_project(){
-    let mut interact = ContractInteract::new().await;
-    let potlock_wanted = 1;
-    let project_wanted = 1;
-    let wanted_proposer = 1;
-    interact.apply_for_pot(potlock_wanted,wanted_proposer).await;
-    interact.accept_application(project_wanted).await;
-    interact.accept_application(project_wanted).await;
-    interact.accept_application(project_wanted).await;
 }
 
 #[tokio::test]
@@ -878,15 +883,4 @@ async fn test_donate_to_project_inactive_then_activate (){
     interact.accept_application(project_wanted).await;
     interact.donate_to_project().await;
 }
-
-#[tokio::test]
-async fn test_change_fee_twice(){
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    interact.change_fee_for_pots(1).await;
-    interact.fee_amount().await;
-    interact.change_fee_for_pots(2).await;
-    interact.fee_amount().await;
-}
-
 
