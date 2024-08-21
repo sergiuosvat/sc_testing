@@ -3,7 +3,7 @@ use potlock::potlock_storage::{PotlockId, ProjectId};
 mod potlock_proxy;
 
 const POTLOCK_ADDRESS: TestSCAddress = TestSCAddress::new("potlock");
-const POTLOCK_CODE_PATH: MxscPath = MxscPath::new("../output/potlock.mxsc.json");
+const POTLOCK_CODE_PATH: MxscPath = MxscPath::new("output/potlock.mxsc.json");
 const OWNER_ADDRESS: TestAddress = TestAddress::new("owner");
 const ADMIN_ADDRESS: TestAddress = TestAddress::new("admin");
 const POT_PROPOSER_ADDRESS: TestAddress = TestAddress::new("pot_proposer");
@@ -440,7 +440,7 @@ fn test_accept_application() {
     let potlock_id: usize = 1usize;
     state.check_potlock_id_is_last(potlock_id);
 
-    //state.accept_pot(potlock_id);
+    state.accept_pot(potlock_id);
 
     let new_project_id = state.apply_for_pot(potlock_id, "Project name", "Project description");
 
