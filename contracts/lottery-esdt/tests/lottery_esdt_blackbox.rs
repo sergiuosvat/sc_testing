@@ -101,7 +101,6 @@ impl LotteryESDTTestState{
                 opt_whitelist,
                 opt_burn_percentage,
             )
-            .returns(ReturnsResult)
             .run();
     }
 
@@ -232,7 +231,6 @@ impl LotteryESDTTestState{
             .typed(proxy::LotteryProxy)
             .buy_ticket(&lottery_name)
             .single_esdt(&token_identifier, 0,&ticket_price)
-            .returns(ReturnsResult)
             .run();
     }
 
@@ -279,7 +277,6 @@ impl LotteryESDTTestState{
             .to(SC_ADDRESS)
             .typed(proxy::LotteryProxy)
             .determine_winner(&lottery_name)
-            .returns(ReturnsResult)
             .run();
     }
 

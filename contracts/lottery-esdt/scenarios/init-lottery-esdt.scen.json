@@ -63,7 +63,7 @@
             "id": "",
             "tx": {
                 "from": "address:OWNER_ADDRESS",
-                "contractCode": "mxsc:output/lottery-esdt.mxsc.json",
+                "contractCode": "mxsc:../output/lottery-esdt.mxsc.json",
                 "arguments": [],
                 "gasLimit": "5,000,000"
             },
