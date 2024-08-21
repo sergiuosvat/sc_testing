@@ -3,5 +3,8 @@ resolver = "2"
 
 members = [
     "contracts/lottery-esdt",
-    "contracts/lottery-esdt/meta"
+    "contracts/lottery-esdt/meta",
+    "contracts/potlock",
+    "contracts/potlock/meta",
+    "contracts/potlock/interact-rs",
 ]

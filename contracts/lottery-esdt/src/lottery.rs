@@ -356,6 +356,18 @@ pub trait Lottery {
         value * percentage / PERCENTAGE_TOTAL
     }
 
+    #[endpoint]
+    fn set_roles(&self, token_identifier: TokenIdentifier) {
+        self.send()
+            .esdt_system_sc_tx()
+            .set_special_roles(
+                &self.blockchain().get_sc_address(),
+                &token_identifier,
+                [EsdtLocalRole::Burn].into_iter(),
+            )
+            .async_call_and_exit()
+    }
+
     // storage
 
     #[view(getLotteryInfo)]

@@ -2,6 +2,54 @@
     "steps": [
         {
             "step": "setState",
+            "accounts": {
+                "address:OWNER_ADDRESS": {
+                    "nonce": "1"
+                }
+            }
+        },
+        {
+            "step": "setState",
+            "accounts": {
+                "address:FIRST_ADDRESS": {
+                    "nonce": "1",
+                    "esdt": {
+                        "str:BSK-476470": "1000"
+                    }
+                }
+            }
+        },
+        {
+            "step": "setState",
+            "accounts": {
+                "address:SECOND_ADDRESS": {
+                    "nonce": "1",
+                    "esdt": {
+                        "str:BSK-476470": "1000"
+                    }
+                }
+            }
+        },
+        {
+            "step": "setState",
+            "accounts": {
+                "address:THIRD_ADDRESS": {
+                    "nonce": "1",
+                    "esdt": {
+                        "str:BSK-476470": "1000",
+                        "str:TEST-123456": "1000"
+                    }
+                }
+            }
+        },
+        {
+            "step": "setState",
+            "currentBlockInfo": {
+                "blockTimestamp": "10"
+            }
+        },
+        {
+            "step": "setState",
             "newAddresses": [
                 {
                     "creatorAddress": "address:OWNER_ADDRESS",
