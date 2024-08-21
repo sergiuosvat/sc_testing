@@ -83,6 +83,7 @@ impl PotlockTestState {
             .tx()
             .from(ADMIN_ADDRESS)
             .to(POTLOCK_ADDRESS)
+            .gas(50_000_000)
             .typed(potlock_proxy::PotlockProxy)
             .change_fee_for_pots(TokenIdentifier::from(TOKEN_ID), BigUint::from(fee_amount))
             .run();
@@ -95,6 +96,7 @@ impl PotlockTestState {
             .to(POTLOCK_ADDRESS)
             .typed(potlock_proxy::PotlockProxy)
             .add_pot(name, description)
+            .gas(50_000_000)
             .egld_or_single_esdt(
                 &EgldOrEsdtTokenIdentifier::esdt(TOKEN_ID),
                 0u64,
@@ -110,6 +112,7 @@ impl PotlockTestState {
             .to(POTLOCK_ADDRESS)
             .typed(potlock_proxy::PotlockProxy)
             .accept_pot(potlock_id)
+            .gas(50_000_000)
             .run();
     }
 
@@ -120,6 +123,7 @@ impl PotlockTestState {
             .to(POTLOCK_ADDRESS)
             .typed(potlock_proxy::PotlockProxy)
             .accept_application(project_id)
+            .gas(50_000_000)
             .run();
     }
 
@@ -130,6 +134,7 @@ impl PotlockTestState {
             .to(POTLOCK_ADDRESS)
             .typed(potlock_proxy::PotlockProxy)
             .remove_pot(potlock_id)
+            .gas(50_000_000)
             .run();
     }
 
@@ -147,6 +152,7 @@ impl PotlockTestState {
             .typed(potlock_proxy::PotlockProxy)
             .apply_for_pot(potlock_id, project_name, description)
             .returns(ReturnsResult)
+            .gas(50_000_000)
             .run();
 
         new_project_id
@@ -164,6 +170,7 @@ impl PotlockTestState {
                 0u64,
                 &multiversx_sc::proxy_imports::BigUint::from(DONATION_AMOUNT),
             )
+            .gas(50_000_000)
             .run();
     }
 
@@ -179,6 +186,7 @@ impl PotlockTestState {
                 0u64,
                 &multiversx_sc::proxy_imports::BigUint::from(DONATION_AMOUNT),
             )
+            .gas(50_000_000)
             .run();
     }
 
@@ -194,6 +202,7 @@ impl PotlockTestState {
                 0u64,
                 &multiversx_sc::proxy_imports::BigUint::from(DONATION_AMOUNT),
             )
+            .gas(50_000_000)
             .run();
     }
 
@@ -208,6 +217,7 @@ impl PotlockTestState {
             .to(POTLOCK_ADDRESS)
             .typed(potlock_proxy::PotlockProxy)
             .distribute_pot_to_projects(potlock_id, percentages)
+            .gas(50_000_000)
             .run();
     }
 
