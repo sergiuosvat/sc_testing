@@ -20,3 +20,22 @@ jobs:
       enable-contracts-size-report: false
     secrets:
       token: ${{ secrets.GITHUB_TOKEN }}
+
+  summarize-test-results:
+    name: Summarize Test Results
+    runs-on: ubuntu-latest
+    needs: contracts
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Run Tests and Capture Output
+        run: |
+          mkdir -p test-results
+          cargo test -- --format=json > test-results/output.json
+
+      - name: Generate Summary
+        run: |
+          echo "| Test Name | Result |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          cat test-results/output.json | jq -r '.test_results[] | "| \(.name) | \(.status) |"' >> $GITHUB_STEP_SUMMARY
