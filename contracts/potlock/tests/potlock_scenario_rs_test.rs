@@ -1,7 +1,4 @@
 use multiversx_sc_scenario::*;
-use multiversx_sc_scenario::imports::MxscPath;
-
-const _: MxscPath = MxscPath::new("output/potlock.mxsc.json");
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
@@ -51,6 +48,16 @@ fn potlock_donate_to_pot_rs() {
 }
 
 #[test]
+fn potlock_donate_to_pot_different_tokens_rs() {
+    world().run("scenarios/potlock-donate-to-pot-different-tokens.scen.json");
+}
+
+#[test]
+fn potlock_donate_to_pot_same_token_rs() {
+    world().run("scenarios/potlock-donate-to-pot-same-token.scen.json");
+}
+
+#[test]
 fn potlock_donate_to_project_rs() {
     world().run("scenarios/potlock-donate-to-project.scen.json");
 }
@@ -88,6 +95,11 @@ fn potlock_fail_donate_to_project_rs() {
 #[test]
 fn potlock_fail_remove_pot_rs() {
     world().run("scenarios/potlock-fail-remove-pot.scen.json");
+}
+
+#[test]
+fn potlock_multiple_change_fees_rs() {
+    world().run("scenarios/potlock-multiple-change-fees.scen.json");
 }
 
 #[test]

@@ -45,6 +45,16 @@ fn potlock_donate_to_pot_go() {
 }
 
 #[test]
+fn potlock_donate_to_pot_different_tokens_go() {
+    world().run("scenarios/potlock-donate-to-pot-different-tokens.scen.json");
+}
+
+#[test]
+fn potlock_donate_to_pot_same_token_go() {
+    world().run("scenarios/potlock-donate-to-pot-same-token.scen.json");
+}
+
+#[test]
 fn potlock_donate_to_project_go() {
     world().run("scenarios/potlock-donate-to-project.scen.json");
 }
@@ -82,6 +92,11 @@ fn potlock_fail_donate_to_project_go() {
 #[test]
 fn potlock_fail_remove_pot_go() {
     world().run("scenarios/potlock-fail-remove-pot.scen.json");
+}
+
+#[test]
+fn potlock_multiple_change_fees_go() {
+    world().run("scenarios/potlock-multiple-change-fees.scen.json");
 }
 
 #[test]
