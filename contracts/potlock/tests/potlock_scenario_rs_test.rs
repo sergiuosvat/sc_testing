@@ -1,7 +1,7 @@
 use multiversx_sc_scenario::*;
 use multiversx_sc_scenario::imports::MxscPath;
 
-const _: MxscPath = MxscPath::new("../output/potlock.mxsc.json");
+const _: MxscPath = MxscPath::new("output/potlock.mxsc.json");
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
