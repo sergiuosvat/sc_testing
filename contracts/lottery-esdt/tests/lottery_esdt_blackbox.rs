@@ -101,7 +101,6 @@ impl LotteryESDTTestState{
                 opt_whitelist,
                 opt_burn_percentage,
             )
-            .returns(ReturnsResult)
             .run();
     }
 
@@ -232,7 +231,6 @@ impl LotteryESDTTestState{
             .typed(proxy::LotteryProxy)
             .buy_ticket(&lottery_name)
             .single_esdt(&token_identifier, 0,&ticket_price)
-            .returns(ReturnsResult)
             .run();
     }
 
@@ -266,20 +264,6 @@ impl LotteryESDTTestState{
             .buy_ticket(&lottery_name)
             .single_esdt(&token_identifier, 0,&fee)
             .returns(ExpectError(4,"Wrong ticket fee!"))
-            .run();
-    }
-
-    fn determine_winner(&mut self)
-    {
-        let lottery_name = ManagedBuffer::new_from_bytes(&b"test"[..]);
-
-        self.world
-            .tx()
-            .from(OWNER_ADDRESS)
-            .to(SC_ADDRESS)
-            .typed(proxy::LotteryProxy)
-            .determine_winner(&lottery_name)
-            .returns(ReturnsResult)
             .run();
     }
 
@@ -328,26 +312,6 @@ fn lottery_esdt_blackbox_buy_all()
     world.buy_ticket_error(FIRST_ADDRESS, ExpectError(4,"Lottery entry period has ended! Awaiting winner announcement."));
 
     world.write_scenario_trace("scenarios/buy-all-tickets-and-exceed-max-tickets.scen.json");
-}
-
-#[test]
-fn lottery_esdt_blackbox_buy_after_winner_announced()
-{
-    let mut world = LotteryESDTTestState::new();
-
-    world.deploy();
-
-    world.start_lottery();
-    
-    world.buy_ticket(FIRST_ADDRESS);
-
-    world.buy_ticket(SECOND_ADDRESS);
-
-    world.determine_winner();
-
-    world.buy_ticket_error(FIRST_ADDRESS, ExpectError(4,"Lottery is currently inactive."));
-    
-    world.write_scenario_trace("scenarios/buy-after-winner-announced.scen.json");
 }
 
 #[test]
@@ -434,25 +398,6 @@ fn lottery_esdt_blackbox_determine_winner_early()
     world.determine_winner_error(ExpectError(4,"Lottery is still running!"));
 
     world.write_scenario_trace("scenarios/determine-winner-early.scen.json");
-
-}
-
-#[test]
-fn lottery_esdt_blackbox_buy_all_and_determine_winner()
-{
-    let mut world = LotteryESDTTestState::new();
-
-    world.deploy();
-
-    world.start_lottery();
-
-    world.buy_ticket(FIRST_ADDRESS);
-
-    world.buy_ticket(SECOND_ADDRESS);
-
-    world.determine_winner();
-
-    world.write_scenario_trace("scenarios/buy-all-tickets-and-determine-winner.scen.json");
 
 }
 

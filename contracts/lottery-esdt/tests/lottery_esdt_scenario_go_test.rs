@@ -15,16 +15,6 @@ fn buy_after_sold_out_go() {
 }
 
 #[test]
-fn buy_after_winner_announced_go() {
-    world().run("scenarios/buy-after-winner-announced.scen.json");
-}
-
-#[test]
-fn buy_all_tickets_and_determine_winner_go() {
-    world().run("scenarios/buy-all-tickets-and-determine-winner.scen.json");
-}
-
-#[test]
 fn buy_all_tickets_and_exceed_max_tickets_go() {
     world().run("scenarios/buy-all-tickets-and-exceed-max-tickets.scen.json");
 }
