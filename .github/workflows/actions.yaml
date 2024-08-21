@@ -29,13 +29,14 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Run Tests and Capture Output
+      - name: Capture Test Output
         run: |
           mkdir -p test-results
-          cargo test -- --format=json > test-results/output.json
+          cargo test -- --nocapture > test-results/output.txt
 
       - name: Generate Summary
         run: |
+          echo "## Test Results" >> $GITHUB_STEP_SUMMARY
           echo "| Test Name | Result |" >> $GITHUB_STEP_SUMMARY
           echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
-          cat test-results/output.json | jq -r '.test_results[] | "| \(.name) | \(.status) |"' >> $GITHUB_STEP_SUMMARY
+          grep "^test" test-results/output.txt | awk '{print "| " $2 " | " ($3=="ok" ? "passed" : "**FAILED**") " |"}' >> $GITHUB_STEP_SUMMARY
