@@ -13,6 +13,7 @@ use std::{
 
 const STATE_FILE: &str = "state.toml";
 const TOKEN_ID: &str = "BSK-476470";
+const TOKEN_ID_2: &str = "TEST2-beba65";
 const FEE_AMOUNT: u64 = 50000000000000000; // 0.05
 const FEE_AMOUNT_2: u64 = 300000000000000000; // 0.03
 
@@ -417,6 +418,30 @@ impl ContractInteract {
         println!("Result: {response:?}");
     }
 
+    async fn donate_to_pot_diff_tokens(&mut self) {
+        let pot_donor: &Bech32Address = &self.config.pot_donor;
+        let token_id = TokenIdentifier::from_esdt_bytes(TOKEN_ID_2);
+        let token_nonce = 0u64;
+        let token_amount = BigUint::<StaticApi>::from(3 * FEE_AMOUNT);
+
+        let potlock_id = 1u32;
+
+        let response = self
+            .interactor
+            .tx()
+            .from(pot_donor)
+            .to(self.state.current_address())
+            .typed(proxy::PotlockProxy)
+            .donate_to_pot(potlock_id)
+            .payment((token_id, token_nonce, token_amount))
+            .returns(ReturnsResultUnmanaged)
+            .prepare_async()
+            .run()
+            .await;
+
+        println!("Result: {response:?}");
+    }
+
     async fn donate_to_project(&mut self) {
         let project_donor: &Bech32Address = &self.config.project_donor;
         let token_id = TokenIdentifier::from_esdt_bytes(TOKEN_ID);
@@ -463,10 +488,17 @@ impl ContractInteract {
         println!("Result: {response:?}");
     }
 
-    async fn change_fee_for_pots(&mut self) {
+    async fn change_fee_for_pots(&mut self, fee_type: u64) {
         let admin: &Bech32Address = &self.config.admin;
         let token_identifier = TokenIdentifier::from_esdt_bytes(TOKEN_ID);
-        let fee = BigUint::<StaticApi>::from(FEE_AMOUNT);
+
+        let fee;
+
+        if fee_type == 1 {
+            fee = BigUint::<StaticApi>::from(FEE_AMOUNT);
+        } else {
+            fee = BigUint::<StaticApi>::from(FEE_AMOUNT_2);
+        }
 
         let response = self
             .interactor
@@ -659,7 +691,18 @@ impl ContractInteract {
 async fn test_deploy() {
     let mut interact = ContractInteract::new().await;
     interact.deploy().await;
-    interact.change_fee_for_pots().await;
+    interact.change_fee_for_pots(1).await;
+}
+
+#[tokio::test]
+async fn test_add_pot() {
+    let mut interact = ContractInteract::new().await;
+    interact.add_pot().await;
+}
+
+async fn test_accept_pot() {
+    let mut interact = ContractInteract::new().await;
+    interact.accept_pot(1).await;
 }
 
 #[tokio::test]
@@ -674,7 +717,7 @@ async fn test_change_fee_wrong_params() {
     let mut interact = ContractInteract::new().await;
     interact.deploy().await;
     interact.fee_amount().await;
-    interact.change_fee_for_pots().await;
+    interact.change_fee_for_pots(1).await;
     interact.fee_amount().await;
 
     // interact.change_fee_for_pots_params(
@@ -761,14 +804,23 @@ async fn test_donate_to_project() {
 #[tokio::test]
 async fn test_multiple_donations() {
     let mut interact = ContractInteract::new().await;
+
     interact.donate_to_pot().await;
     interact.pot_donations().await;
+
+    interact.donate_to_pot_diff_tokens().await;
+    interact.pot_donations().await;
+
+}
+
+async fn test_multiple_donations_same_token(){
+    let mut interact = ContractInteract::new().await;
+
     interact.donate_to_pot().await;
     interact.pot_donations().await;
     interact.donate_to_pot().await;
     interact.pot_donations().await;
 }
-
 #[tokio::test]
 async fn test_multiple_accept_project(){
     let mut interact = ContractInteract::new().await;
@@ -792,7 +844,7 @@ async fn test_different_pot_project_donations(){
     let wanted_proposer_2 = 2;
 
     interact.deploy().await;
-    interact.change_fee_for_pots().await;
+    interact.change_fee_for_pots(1).await;
     interact.add_pot().await;
     interact.accept_pot(potlock_wanted).await;
     interact.add_pot().await;
@@ -817,7 +869,7 @@ async fn test_donate_to_project_inactive_then_activate (){
     let wanted_proposer = 1;
 
     interact.deploy().await;
-    interact.change_fee_for_pots().await;
+    interact.change_fee_for_pots(1).await;
     interact.add_pot().await;
     interact.accept_pot(potlock_wanted).await;
 
@@ -825,6 +877,16 @@ async fn test_donate_to_project_inactive_then_activate (){
     interact.donate_to_project_params(TOKEN_ID,project_wanted,ExpectError(4, "Project is not active!")).await;
     interact.accept_application(project_wanted).await;
     interact.donate_to_project().await;
+}
+
+#[tokio::test]
+async fn test_change_fee_twice(){
+    let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    interact.change_fee_for_pots(1).await;
+    interact.fee_amount().await;
+    interact.change_fee_for_pots(2).await;
+    interact.fee_amount().await;
 }
 
 

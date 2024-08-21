@@ -1,38 +1,12 @@
 use multiversx_sc_scenario::*;
-use multiversx_sc_scenario::imports::{MxscPath, TestAddress, TestTokenIdentifier};
+use multiversx_sc_scenario::imports::MxscPath;
 
 const _: MxscPath = MxscPath::new("../output/potlock.mxsc.json");
-const OWNER_ADDRESS: TestAddress = TestAddress::new("owner");
-const ADMIN_ADDRESS: TestAddress = TestAddress::new("admin");
-const POT_PROPOSER_ADDRESS: TestAddress = TestAddress::new("pot_proposer");
-const PROJECT_PROPOSER_ADDRESS: TestAddress = TestAddress::new("project_proposer");
-const POT_DONOR_ADDRESS: TestAddress = TestAddress::new("pot_donor");
-const PROJECT_DONOR_ADDRESS: TestAddress = TestAddress::new("project_donor");
-const TOKEN_ID: TestTokenIdentifier = TestTokenIdentifier::new("POT-123456");
-const DIFFERENT_TOKEN_ID: TestTokenIdentifier = TestTokenIdentifier::new("DIFFPOT-123456");
-const INITIAL_BALANCE: u64 = 2_000;
 
 fn world() -> ScenarioWorld {
     let mut blockchain = ScenarioWorld::new();
 
     blockchain.register_contract("mxsc:output/potlock.mxsc.json", potlock::ContractBuilder);
-    blockchain
-            .account(OWNER_ADDRESS)
-            .nonce(1)
-            .account(ADMIN_ADDRESS)
-            .nonce(1)
-            .account(POT_PROPOSER_ADDRESS)
-            .nonce(1)
-            .esdt_balance(TOKEN_ID, INITIAL_BALANCE)
-            .account(PROJECT_PROPOSER_ADDRESS)
-            .nonce(1)
-            .account(POT_DONOR_ADDRESS)
-            .nonce(1)
-            .esdt_balance(TOKEN_ID, INITIAL_BALANCE)
-            .account(PROJECT_DONOR_ADDRESS)
-            .nonce(1)
-            .esdt_balance(TOKEN_ID, INITIAL_BALANCE)
-            .esdt_balance(DIFFERENT_TOKEN_ID, INITIAL_BALANCE);
     blockchain
 }
 

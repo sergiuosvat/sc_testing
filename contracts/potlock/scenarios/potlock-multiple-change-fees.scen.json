@@ -82,6 +82,24 @@
             "step": "scCall",
             "id": "",
             "tx": {
+                "from": "address:admin",
+                "to": "sc:potlock",
+                "function": "changeFeeForPots",
+                "arguments": [
+                    "0x504f542d313233343536",
+                    "0x07d0"
+                ],
+                "gasLimit": "5,000,000"
+            },
+            "expect": {
+                "out": [],
+                "status": "0"
+            }
+        },
+        {
+            "step": "scCall",
+            "id": "",
+            "tx": {
                 "from": "address:pot_proposer",
                 "to": "sc:potlock",
                 "esdtValue": [
@@ -105,68 +123,9 @@
         {
             "step": "checkState",
             "accounts": {
-                "address:pot_proposer": {
-                    "esdt": {
-                        "str:POT-123456": "1000",
-                        "+": ""
-                    },
-                    "storage": "*",
-                    "code": "*",
-                    "owner": "*"
-                }
-            }
-        },
-        {
-            "step": "checkState",
-            "accounts": {
                 "sc:potlock": {
                     "esdt": {
                         "str:POT-123456": "1000",
-                        "+": ""
-                    },
-                    "storage": "*",
-                    "code": "*",
-                    "owner": "*"
-                }
-            }
-        },
-        {
-            "step": "scCall",
-            "id": "",
-            "tx": {
-                "from": "address:owner",
-                "to": "sc:potlock",
-                "function": "removePot",
-                "arguments": [
-                    "0x01"
-                ],
-                "gasLimit": "5,000,000"
-            },
-            "expect": {
-                "out": [],
-                "status": "0"
-            }
-        },
-        {
-            "step": "checkState",
-            "accounts": {
-                "address:pot_proposer": {
-                    "esdt": {
-                        "str:POT-123456": "2000",
-                        "+": ""
-                    },
-                    "storage": "*",
-                    "code": "*",
-                    "owner": "*"
-                }
-            }
-        },
-        {
-            "step": "checkState",
-            "accounts": {
-                "sc:potlock": {
-                    "esdt": {
-                        "str:POT-123456": "0",
                         "+": ""
                     },
                     "storage": "*",

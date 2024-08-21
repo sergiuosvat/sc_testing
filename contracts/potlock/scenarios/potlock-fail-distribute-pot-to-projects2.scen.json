@@ -2,6 +2,40 @@
     "steps": [
         {
             "step": "setState",
+            "accounts": {
+                "address:admin": {
+                    "nonce": "1"
+                },
+                "address:owner": {
+                    "nonce": "1"
+                },
+                "address:pot_donor": {
+                    "nonce": "1",
+                    "esdt": {
+                        "str:DIFFPOT-123456": "2000",
+                        "str:POT-123456": "2000"
+                    }
+                },
+                "address:pot_proposer": {
+                    "nonce": "1",
+                    "esdt": {
+                        "str:POT-123456": "2000"
+                    }
+                },
+                "address:project_donor": {
+                    "nonce": "1",
+                    "esdt": {
+                        "str:DIFFPOT-123456": "2000",
+                        "str:POT-123456": "2000"
+                    }
+                },
+                "address:project_proposer": {
+                    "nonce": "1"
+                }
+            }
+        },
+        {
+            "step": "setState",
             "newAddresses": [
                 {
                     "creatorAddress": "address:owner",

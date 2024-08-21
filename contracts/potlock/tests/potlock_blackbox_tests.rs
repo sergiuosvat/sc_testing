@@ -13,6 +13,7 @@ const PROJECT_DONOR_ADDRESS: TestAddress = TestAddress::new("project_donor");
 const TOKEN_ID: TestTokenIdentifier = TestTokenIdentifier::new("POT-123456");
 const DIFFERENT_TOKEN_ID: TestTokenIdentifier = TestTokenIdentifier::new("DIFFPOT-123456");
 const POT_FEE_CREATION: u64 = 1_000;
+const DIFF_POT_FEE_CREATION: u64 = 2_000;
 const INITIAL_BALANCE: u64 = 2_000;
 const DONATION_AMOUNT: u64 = 100;
 const HALF_PERCENTAGE: u64 = 5_000; // 50%
@@ -33,6 +34,8 @@ impl PotlockTestState {
     fn new() -> Self {
         let mut world = world();
 
+        world.start_trace();
+
         world
             .account(OWNER_ADDRESS)
             .nonce(1)
@@ -46,16 +49,13 @@ impl PotlockTestState {
             .account(POT_DONOR_ADDRESS)
             .nonce(1)
             .esdt_balance(TOKEN_ID, INITIAL_BALANCE)
+            .esdt_balance(DIFFERENT_TOKEN_ID, INITIAL_BALANCE)
             .account(PROJECT_DONOR_ADDRESS)
             .nonce(1)
             .esdt_balance(TOKEN_ID, INITIAL_BALANCE)
             .esdt_balance(DIFFERENT_TOKEN_ID, INITIAL_BALANCE);
 
         Self { world }
-    }
-
-    fn start_trace(&mut self) {
-        self.world.start_trace();
     }
 
     fn write_scenario(&mut self, filename: &str) {
@@ -167,6 +167,21 @@ impl PotlockTestState {
             .run();
     }
 
+    fn donate_to_pot_diff_tokens(&mut self, potlock_id: PotlockId) {
+        self.world
+            .tx()
+            .from(POT_DONOR_ADDRESS)
+            .to(POTLOCK_ADDRESS)
+            .typed(potlock_proxy::PotlockProxy)
+            .donate_to_pot(potlock_id)
+            .egld_or_single_esdt(
+                &EgldOrEsdtTokenIdentifier::esdt(DIFFERENT_TOKEN_ID),
+                0u64,
+                &multiversx_sc::proxy_imports::BigUint::from(DONATION_AMOUNT),
+            )
+            .run();
+    }
+
     fn donate_to_project(&mut self, project_id: ProjectId) {
         self.world
             .tx()
@@ -207,6 +222,18 @@ impl PotlockTestState {
         self.world
             .check_account(address)
             .esdt_balance(TOKEN_ID, balance);
+    }
+
+    fn check_sc_esdt_balance_diff_tokens(&mut self, address: TestSCAddress, balance: u64) {
+        self.world
+            .check_account(address)
+            .esdt_balance(DIFFERENT_TOKEN_ID, balance);
+    }
+
+    fn check_esdt_balance_diff_tokens(&mut self, address: TestAddress, balance: u64) {
+        self.world
+            .check_account(address)
+            .esdt_balance(DIFFERENT_TOKEN_ID, balance);
     }
 
     fn check_potlock_id_is_last(&mut self, potlock_id: PotlockId) {
@@ -256,7 +283,6 @@ impl PotlockTestState {
 #[test]
 fn test_deploy_and_config() {
     let mut state = PotlockTestState::new();
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -267,8 +293,6 @@ fn test_deploy_and_config() {
 #[test]
 fn test_add_pot() {
     let mut state = PotlockTestState::new();
-
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -288,8 +312,6 @@ fn test_add_pot() {
 fn test_accept_pot() {
     let mut state = PotlockTestState::new();
 
-    state.start_trace();
-
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
 
@@ -308,8 +330,6 @@ fn test_accept_pot() {
 #[test]
 fn test_remove_pot() {
     let mut state = PotlockTestState::new();
-
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -333,8 +353,6 @@ fn test_remove_pot() {
 fn test_apply_for_pot() {
     let mut state = PotlockTestState::new();
 
-    state.start_trace();
-
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
 
@@ -356,8 +374,6 @@ fn test_apply_for_pot() {
 #[test]
 fn test_donate_to_pot() {
     let mut state = PotlockTestState::new();
-
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -384,8 +400,6 @@ fn test_donate_to_pot() {
 #[test]
 fn test_donate_to_project() {
     let mut state = PotlockTestState::new();
-    
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -419,8 +433,6 @@ fn test_donate_to_project() {
 fn test_accept_application() {
     let mut state = PotlockTestState::new();
 
-    state.start_trace();
-
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
 
@@ -445,8 +457,6 @@ fn test_accept_application() {
 #[test]
 fn test_distribute_pot_to_projects() {
     let mut state = PotlockTestState::new();
-
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -489,8 +499,6 @@ fn test_distribute_pot_to_projects() {
 fn test_distribute_to_project_less_than_max_percent()
 {
     let mut state = PotlockTestState::new();
-    
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -530,13 +538,91 @@ fn test_distribute_to_project_less_than_max_percent()
     state.write_scenario("scenarios/potlock-distribute-to-project-less-than-max-percent.scen.json");
 }
 
+#[test]
+fn test_donate_to_pot_different_tokens()
+{
+    let mut state = PotlockTestState::new();
+
+    state.deploy_potlock_contract();
+    state.change_fee_for_pots(POT_FEE_CREATION);
+
+    // Add Pot
+    state.add_pot("Pot", "Pot Description");
+    let potlock_id: usize = 1usize;
+    state.check_potlock_id_is_last(potlock_id);
+
+    // Accept Pot
+    state.accept_pot(potlock_id);
+
+    //Donate to pot first token
+    state.donate_to_pot(potlock_id);
+    state.check_esdt_balance(POT_DONOR_ADDRESS, INITIAL_BALANCE - DONATION_AMOUNT);
+    state.check_sc_esdt_balance(POTLOCK_ADDRESS, POT_FEE_CREATION + DONATION_AMOUNT);
+
+    //Donate to pot second token
+    state.donate_to_pot_diff_tokens(potlock_id);
+    state.check_esdt_balance_diff_tokens(POT_DONOR_ADDRESS, INITIAL_BALANCE - DONATION_AMOUNT);
+    state.check_sc_esdt_balance_diff_tokens(POTLOCK_ADDRESS, DONATION_AMOUNT);
+    state.check_sc_esdt_balance(POTLOCK_ADDRESS, POT_FEE_CREATION + DONATION_AMOUNT);
+
+    state.write_scenario("scenarios/potlock-donate-to-pot-different-tokens.scen.json");
+
+
+}
+
+#[test]
+fn test_donate_to_pot_same_token()
+{
+    let mut state = PotlockTestState::new();
+
+    state.deploy_potlock_contract();
+    state.change_fee_for_pots(POT_FEE_CREATION);
+
+    // Add Pot
+    state.add_pot("Pot", "Pot Description");
+    let potlock_id: usize = 1usize;
+    state.check_potlock_id_is_last(potlock_id);
+
+    // Accept Pot
+    state.accept_pot(potlock_id);
+
+    //Donate to pot first token
+    state.donate_to_pot(potlock_id);
+    state.check_esdt_balance(POT_DONOR_ADDRESS, INITIAL_BALANCE - DONATION_AMOUNT);
+    state.check_sc_esdt_balance(POTLOCK_ADDRESS, POT_FEE_CREATION + DONATION_AMOUNT);
+
+    //Donate again to pot first token
+    state.donate_to_pot(potlock_id);
+    state.check_esdt_balance(POT_DONOR_ADDRESS, INITIAL_BALANCE - 2 * DONATION_AMOUNT);
+    state.check_sc_esdt_balance(POTLOCK_ADDRESS, POT_FEE_CREATION + 2* DONATION_AMOUNT);
+
+    state.write_scenario("scenarios/potlock-donate-to-pot-same-token.scen.json");
+
+
+}
+
+#[test]
+fn test_multiple_change_fees()
+{
+    let mut state = PotlockTestState::new();
+
+    state.deploy_potlock_contract();
+
+    state.change_fee_for_pots(POT_FEE_CREATION);
+    state.change_fee_for_pots(DIFF_POT_FEE_CREATION);
+
+    state.add_pot("Pot", "Pot Description");
+
+    state.check_sc_esdt_balance(POTLOCK_ADDRESS, POT_FEE_CREATION);
+
+    state.write_scenario("scenarios/potlock-multiple-change-fees.scen.json");
+}
+
 ///////////// Negative tests //////////////
 
 #[test]
 fn test_fail_add_pot() {
     let mut state = PotlockTestState::new();
-
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -560,8 +646,6 @@ fn test_fail_add_pot() {
 #[test]
 fn test_fail_accept_pot() {
     let mut state = PotlockTestState::new();
-
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -589,8 +673,6 @@ fn test_fail_accept_pot() {
 fn test_fail_remove_pot() {
     let mut state = PotlockTestState::new();
 
-    state.start_trace();
-
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
 
@@ -616,8 +698,6 @@ fn test_fail_remove_pot() {
 #[test]
 fn test_fail_accept_application() {
     let mut state = PotlockTestState::new();
-
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -650,8 +730,6 @@ fn test_fail_accept_application() {
 #[test]
 fn test_fail_distribute_pot_to_projects() {
     let mut state = PotlockTestState::new();
-
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -687,8 +765,6 @@ fn test_fail_distribute_pot_to_projects() {
 #[test]
 fn test_fail_distribute_pot_to_projects2() {
     let mut state = PotlockTestState::new();
-
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
@@ -736,8 +812,6 @@ fn test_fail_distribute_pot_to_projects2() {
 #[test]
 fn test_fail_donate_to_project() {
     let mut state = PotlockTestState::new();
-
-    state.start_trace();
 
     state.deploy_potlock_contract();
     state.change_fee_for_pots(POT_FEE_CREATION);
