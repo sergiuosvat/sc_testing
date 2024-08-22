@@ -1038,6 +1038,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "multiversx-sc-modules"
+version = "0.52.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "61f5c29c6044f3dc9e866858feee625d7fae5604a68ac7bd66dec683eee97563"
+dependencies = [
+ "multiversx-sc",
+]
+
+[[package]]
 name = "multiversx-sc-scenario"
 version = "0.52.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1319,6 +1328,24 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d231b230927b5e4ad203db57bbcbee2802f6bce620b1e4a9024a07d94e2907ec"
 
 [[package]]
+name = "potlock"
+version = "0.0.0"
+dependencies = [
+ "multiversx-sc",
+ "multiversx-sc-modules",
+ "multiversx-sc-scenario",
+ "num-bigint",
+]
+
+[[package]]
+name = "potlock-meta"
+version = "0.0.0"
+dependencies = [
+ "multiversx-sc-meta-lib",
+ "potlock",
+]
+
+[[package]]
 name = "ppv-lite86"
 version = "0.2.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1530,6 +1557,18 @@ dependencies = [
  "spin",
  "untrusted",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "rust-interact"
+version = "0.0.0"
+dependencies = [
+ "clap",
+ "multiversx-sc",
+ "multiversx-sc-snippets",
+ "potlock",
+ "serde",
+ "toml",
 ]
 
 [[package]]
