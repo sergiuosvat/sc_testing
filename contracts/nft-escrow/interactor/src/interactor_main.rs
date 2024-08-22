@@ -431,6 +431,26 @@ async fn test_escrow_success() {
 }
 
 #[tokio::test]
+async fn test_escrow_success_twice() {
+    let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    let token_id = String::from(TOKEN_ID);
+    let token_nonce = 1u64;
+    let token_amount = BigUint::<StaticApi>::from(1u128);
+    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
+    let wanted_nonce = 106u64;
+    let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+    interact.escrow_succes(token_id.clone(), token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, wanted_address).await;
+    interact.escrow_succes(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address).await;
+
+    let ivan_address = Bech32Address::from_bech32_string(String::from(IVAN_ADDRESS));
+    let wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+
+    interact.get_created_offers(ivan_address).await;
+    interact.get_wanted_offers(wanted_address).await;
+}
+
+#[tokio::test]
 async fn test_accept_fail_offer_does_not_exist(){
     let mut interact = ContractInteract::new().await;
     interact.deploy().await;
@@ -456,8 +476,6 @@ async fn test_unauthorized_acceptance() {
     ).await;
 
     println!("Offer id: {offer_id}");
-
-   // interact.wallet_address = interact.interactor.register_wallet(test_wallets::bob());
 
     let expected_error = ExpectError(4, "Can not accept this offer");
     interact
@@ -487,8 +505,21 @@ async fn test_nft_does_not_match() {
     let expected_error = ExpectError(4, "NFT does not match");
     interact
         .accept_fail_address(
-            token_id, token_nonce, token_amount, offer_id, expected_error
+            token_id.clone(), token_nonce, token_amount, offer_id, expected_error
         ).await;
+
+    let toke_nonce_diff = 2u64;
+    interact
+        .accept_fail_address(
+            token_id, toke_nonce_diff, token_amount, offer_id, ExpectError(4, "NFT does not match")
+        ).await;
+    
+    let token_id_diff = "INTERNS-123456";
+    interact
+        .accept_fail_address(
+            token_id_diff.to_string(), token_nonce, token_amount, offer_id, ExpectError(4, "NFT does not match")
+        ).await;
+    
 }
 
 #[tokio::test]
@@ -569,4 +600,52 @@ async fn test_wanted_offers_not_exists() {
     interact.deploy().await;
     let address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
     interact.get_wanted_offers(address).await;
+}
+
+#[tokio::test]
+async fn test_multiple_accept_offer() {
+    let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    let token_id =  String::from(TOKEN_ID);
+    let token_nonce = 1u64;
+    let token_amount =BigUint::<StaticApi>::from(1u128);
+    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&"MICE-9e007a"[..]);
+    let wanted_nonce = 2u64;
+    let wanted_address = Bech32Address::from_bech32_string(String::from("erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"));
+    let offer_id = interact.escrow_succes(
+        token_id.clone(), token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
+    ).await;
+    println!("Offer id: {}", offer_id); 
+
+    interact
+        .accept_success(
+            token_id.clone(), token_nonce, token_amount.clone(), offer_id
+        ).await;
+
+    interact.accept_fail(token_id, token_nonce, token_amount, offer_id, ExpectError(4, "Can not accept this offer")).await;
+}
+
+#[tokio::test]
+async fn test_multiple_offers_interaction() {
+    let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    let token_id =  String::from(TOKEN_ID);
+    let token_nonce = 1u64;
+    let token_amount =BigUint::<StaticApi>::from(1u128);
+    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&"MICE-9e007a"[..]);
+    let wanted_nonce = 2u64;
+    let wanted_address = Bech32Address::from_bech32_string(String::from("erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"));
+    let offer_id = interact.escrow_succes(
+        token_id.clone(), token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
+    ).await;
+    let offer_id_2 = interact.escrow_succes(
+        token_id.clone(), token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
+    ).await;
+
+    interact
+        .accept_success(
+            token_id, token_nonce, token_amount, offer_id
+        ).await;
+    
+    interact.cancel(offer_id_2).await;  
 }
