@@ -8,4 +8,7 @@ members = [
     "contracts/potlock",
     "contracts/potlock/meta",
     "contracts/potlock/interact-rs",
+    "contracts/nft-escrow",
+    "contracts/nft-escrow/meta",
+    "contracts/nft-escrow/interactor",
 ]

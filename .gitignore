@@ -13,3 +13,6 @@
 
 #Zone identifier WSL stuff
 *Zone.Identifier
+
+#pems
+*.pem
