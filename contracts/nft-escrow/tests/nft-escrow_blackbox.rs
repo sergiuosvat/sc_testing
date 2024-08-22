@@ -30,7 +30,8 @@ impl NftEscrowTestState {
 
         world
             .account(OWNER_ADDRESS)
-            .esdt_nft_balance(TOKEN_IDENTIFIER, 1, 10, ManagedBuffer::new());
+            .esdt_nft_balance(TOKEN_IDENTIFIER, 1, 10, ManagedBuffer::new())
+            .esdt_nft_balance(TOKEN_IDENTIFIER, 0, 10, ManagedBuffer::new());
 
         world
         .account(BUYER_ADDRESS)
