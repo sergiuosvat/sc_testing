@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - potlock-sc
+      - nft-escrow
   pull_request:
 
 permissions:
