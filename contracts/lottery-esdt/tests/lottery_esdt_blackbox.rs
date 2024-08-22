@@ -26,8 +26,6 @@ impl LotteryESDTTestState{
     fn new() -> Self {
         let mut world = world();
 
-        world.start_trace();
-
         world.account(OWNER_ADDRESS).nonce(1);
 
         world
@@ -65,10 +63,6 @@ impl LotteryESDTTestState{
             .run();
     }
 
-    fn write_scenario_trace(&mut self, file_name: &str){
-        self.world.write_scenario_trace(file_name);
-    }
-
     fn start_lottery(&mut self)
     {
         let lottery_name = ManagedBuffer::new_from_bytes(&b"test"[..]);
@@ -76,7 +70,7 @@ impl LotteryESDTTestState{
         let ticket_price = BigUint::<StaticApi>::from(1u128);
         let opt_total_tickets = Option::Some(2u32);
         let opt_deadline = Option::Some(20u64);
-        let opt_max_entries_per_user = Option::Some(1u32);
+        let opt_max_entries_per_user = Option::Some(2u32);
         let prize_distribution_data: &[u8] = &[75,25];
         let opt_prize_distribution = Option::Some(ManagedVec::from_iter(prize_distribution_data.iter().copied()));
         let mut whitelist = ManagedVec::new();
@@ -143,6 +137,7 @@ impl LotteryESDTTestState{
     fn start_lottery_error_params(&mut self, lottery_name_wrong: bool, token_identifier_wrong:u64, ticket_price_wrong:bool, opt_total_tickets_wrong: Option<u32>, opt_deadline_wrong: Option<u64>,
          opt_max_entries_per_user_wrong: bool, opt_prize_distribution_wrong: bool, opt_burn_percentage_wrong: bool, error: ExpectError)
     {
+        let token_id_burnable : &[u8] = &b"TEST-123456"[..];
         let lottery_name = if lottery_name_wrong {
             ManagedBuffer::new_from_bytes(&b""[..])
         } else {
@@ -197,6 +192,8 @@ impl LotteryESDTTestState{
         //     .typed(proxy::LotteryProxy)
         //     .set_roles(TOKEN_BURNABLE)
         //     .run();
+
+        self.world.set_esdt_local_roles(SC_ADDRESS, token_id_burnable, &[EsdtLocalRole::Burn]);
 
         self.world
             .tx()
@@ -267,6 +264,20 @@ impl LotteryESDTTestState{
             .run();
     }
 
+    fn determine_winner(&mut self)
+    {
+        let lottery_name = ManagedBuffer::new_from_bytes(&b"test"[..]);
+
+        self.world
+            .tx()
+            .from(OWNER_ADDRESS)
+            .to(SC_ADDRESS)
+            .typed(proxy::LotteryProxy)
+            .determine_winner(&lottery_name)
+            .returns(ReturnsResult)
+            .run();
+    }
+
     fn determine_winner_error(&mut self, error: ExpectError)
     {
         let lottery_name = ManagedBuffer::new_from_bytes(&b"test"[..]);
@@ -293,7 +304,6 @@ fn lottery_esdt_blackbox_init(){
 
     world.deploy();
 
-    world.write_scenario_trace("scenarios/init-lottery-esdt.scen.json");
 }
 
 #[test]
@@ -310,8 +320,24 @@ fn lottery_esdt_blackbox_buy_all()
     world.buy_ticket(SECOND_ADDRESS);
 
     world.buy_ticket_error(FIRST_ADDRESS, ExpectError(4,"Lottery entry period has ended! Awaiting winner announcement."));
+}
 
-    world.write_scenario_trace("scenarios/buy-all-tickets-and-exceed-max-tickets.scen.json");
+#[test]
+fn lottery_esdt_blackbox_buy_after_winner_announced() {
+    let mut world = LotteryESDTTestState::new();
+
+    world.deploy();
+
+    world.start_lottery();
+
+    world.buy_ticket(FIRST_ADDRESS);
+
+    world.buy_ticket(SECOND_ADDRESS);
+
+    world.determine_winner();
+
+    world.buy_ticket_error(FIRST_ADDRESS, ExpectError(4,"Lottery is currently inactive."));
+    
 }
 
 #[test]
@@ -331,8 +357,6 @@ fn lottery_esdt_blackbox_buy_after_deadline()
     
     world.buy_ticket_error(FIRST_ADDRESS, ExpectError(4,"Lottery entry period has ended! Awaiting winner announcement."));
 
-    world.write_scenario_trace("scenarios/buy-after-deadline.scen.json");
-
 }
 
 #[test]
@@ -350,8 +374,6 @@ fn lottery_esdt_blackbox_buy_after_sold_out()
 
     world.buy_ticket_error(FIRST_ADDRESS, ExpectError(4,"Lottery entry period has ended! Awaiting winner announcement."));
 
-    world.write_scenario_trace("scenarios/buy-after-sold-out.scen.json");
-
 }
 
 #[test]
@@ -365,8 +387,6 @@ fn lottery_esdt_blackbox_buy_not_whitelisted()
     
     world.buy_ticket_error(THIRD_ADDRESS, ExpectError(4, "You are not allowed to participate in this lottery!"));
 
-    world.write_scenario_trace("scenarios/buy-not-whitelisted.scen.json");
-
 }
 
 #[test]
@@ -379,8 +399,6 @@ fn lottery_esdt_blackbox_buy_wrong_fee()
     world.start_lottery();
     
     world.buy_ticket_wrong_fee(FIRST_ADDRESS, BigUint::<StaticApi>::from(2u128));
-    
-    world.write_scenario_trace("scenarios/buy-wrong-fee.scen.json");
 
 }
 
@@ -397,8 +415,22 @@ fn lottery_esdt_blackbox_determine_winner_early()
 
     world.determine_winner_error(ExpectError(4,"Lottery is still running!"));
 
-    world.write_scenario_trace("scenarios/determine-winner-early.scen.json");
+}
 
+#[test]
+fn lottery_esdt_blackbox_determine_winner_one_participant() {
+    let mut world = LotteryESDTTestState::new();
+
+    world.deploy();
+
+    world.start_lottery();
+
+    world.buy_ticket(FIRST_ADDRESS);
+
+    world.buy_ticket(FIRST_ADDRESS);
+
+    world.determine_winner();
+    
 }
 
 #[test]
@@ -411,8 +443,6 @@ fn lottery_esdt_blackbox_start_lottery_twice()
     world.start_lottery();
 
     world.start_lottery_error(ExpectError(4,"Lottery is already active!"));
-
-    world.write_scenario_trace("scenarios/start-lottery-twice.scen.json");
 
 }
 
@@ -452,8 +482,6 @@ fn lottery_esdt_blackbox_wrong_start_params()
 
     world.start_lottery_error_params(false, 0, false, total_tickets, deadline, false, false, true, ExpectError(4,"The contract can't burn the selected token!"));
 
-    //world.start_lottery_error_params(false, 3, false, total_tickets, deadline, false, false, true, ExpectError(4,"Invalid burn percentage!"));
-
-    world.write_scenario_trace("scenarios/wrong-start-params.scen.json");
+    world.start_lottery_error_params(false, 3, false, total_tickets, deadline, false, false, true, ExpectError(4,"Invalid burn percentage!"));
 
 }
