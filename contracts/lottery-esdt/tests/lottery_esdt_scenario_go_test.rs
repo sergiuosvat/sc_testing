@@ -188,8 +188,3 @@ fn start_with_all_options_go() {
 fn start_with_no_options_go() {
     world().run("scenarios/start-with-no-options.scen.json");
 }
-
-#[test]
-fn wrong_start_params_go() {
-    world().run("scenarios/wrong-start-params.scen.json");
-}

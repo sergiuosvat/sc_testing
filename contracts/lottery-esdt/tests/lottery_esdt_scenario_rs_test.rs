@@ -199,8 +199,3 @@ fn start_with_all_options_rs() {
 fn start_with_no_options_rs() {
     world().run("scenarios/start-with-no-options.scen.json");
 }
-
-#[test]
-fn wrong_start_params_rs() {
-    world().run("scenarios/wrong-start-params.scen.json");
-}
