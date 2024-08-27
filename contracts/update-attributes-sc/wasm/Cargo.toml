@@ -5,9 +5,9 @@
 # ##########################################
 
 [package]
-name = "nft-escrow-wasm"
+name = "update-attributes-wasm"
 version = "0.0.0"
-edition = "2018"
+edition = "2021"
 publish = false
 
 [lib]
@@ -24,11 +24,11 @@ overflow-checks = false
 [profile.dev]
 panic = "abort"
 
-[dependencies.nft-escrow]
+[dependencies.update-attributes]
 path = ".."
 
 [dependencies.multiversx-sc-wasm-adapter]
-version = "0.52.3"
+version = "0.50.3"
 
 [workspace]
 members = ["."]

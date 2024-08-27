@@ -16,3 +16,6 @@
 
 #pems
 *.pem
+
+#Profraw files
+*.profraw

@@ -9,8 +9,7 @@
         },
         "contractCrate": {
             "name": "potlock",
-            "version": "0.0.0",
-            "gitVersion": "v0.45.2.1-reproducible-388-g906e146"
+            "version": "0.0.0"
         },
         "framework": {
             "name": "multiversx-sc",
