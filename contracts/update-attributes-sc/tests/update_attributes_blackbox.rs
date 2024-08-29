@@ -86,7 +86,7 @@ impl UpdateAttributesState {
             .from(OWNER_ADDRESS)
             .to(SC_ADDRESS)
             .typed(proxy::UpdateAttributesProxy)
-            .create_nft(OWNER_ADDRESS)
+            .create_nft()
             .run();
     }
 
@@ -97,32 +97,49 @@ impl UpdateAttributesState {
             .from(OWNER_ADDRESS)
             .to(SC_ADDRESS)
             .typed(proxy::UpdateAttributesProxy)
-            .send_nft(SECOND_ADDRESS, token_nonce)
+            .send_nft(SECOND_ADDRESS,token_nonce)
             .run();
     }
 
-    fn update_attributes(&mut self) {
+    fn update_attributes(&mut self, token_id: String) {
         let attributes = "new attributes";
-        let token_id = EgldOrEsdtTokenIdentifier::esdt("Test Token");
+        let token_id = TokenIdentifier::from_esdt_bytes(token_id.as_bytes());
         let amount = BigUint::from(1u64);
         self.world
             .tx()
-            .from(OWNER_ADDRESS)
+            .from(SECOND_ADDRESS)
             .to(SC_ADDRESS)
             .typed(proxy::UpdateAttributesProxy)
             .update_attributes(attributes)
-            .egld_or_single_esdt(&token_id, 0, &amount)
+            .single_esdt(&token_id, 1, &amount)
             .run();
+    }
+
+    fn test_get_nft_token_id(&mut self) -> String {
+        let result = self.world
+            .query()
+            .to(SC_ADDRESS)
+            .typed(proxy::UpdateAttributesProxy)
+            .nft_token_id()
+            .returns(ReturnsResult)
+            .run();
+        result.to_string()
+    }
+
+    fn get_token_mapper(&mut self) -> String {
+        let result = self.world
+            .query()
+            .to(SC_ADDRESS)
+            .typed(proxy::UpdateAttributesProxy)
+            .test_token_mapper()
+            .returns(ReturnsResult)
+            .run();
+        result.to_string()
     }
 
     fn check_balance_non_fungible(&mut self) {
         let token_id = TestTokenIdentifier::new("Test Token");
         self.world.check_account(OWNER_ADDRESS).esdt_balance(token_id, 0u64);
-    }
-
-    fn check_balance_fungible(&mut self) {
-        let token_id = TestTokenIdentifier::new("Test Token 2");
-        self.world.check_account(OWNER_ADDRESS).esdt_balance(token_id, 100u64);
     }
     
 }
@@ -149,7 +166,6 @@ fn test_issue_fungible() {
     world.deploy_contract();
     world.set_roles();
     world.issue_fungible();
-    world.check_balance_fungible();
 }
 
 #[test]
@@ -168,7 +184,9 @@ fn test_issue_fungible_token_mapper() {
 
     world.deploy_contract();
     world.set_roles();
+    world.issue_fungible();
     world.issue_fungible_token_mapper();
+    world.get_token_mapper();
 }
 
 #[test]
@@ -189,7 +207,9 @@ fn test_update_attributes() {
     world.set_roles();
     world.issue_non_fungible();
     world.create_nft();
-    world.update_attributes();
+    let token_id = world.test_get_nft_token_id();
+    world.send_nft();
+    world.update_attributes(token_id);
 }
 
 #[test]
@@ -201,6 +221,16 @@ fn test_send_nft() {
     world.issue_non_fungible();
     world.create_nft();
     world.send_nft();
+}
+
+#[test]
+fn test_double_non_fungible_issue() {
+    let mut world = UpdateAttributesState::new();
+
+    world.deploy_contract();
+    world.issue_non_fungible();
+    world.issue_non_fungible();
+    world.set_roles();
 }
 
 

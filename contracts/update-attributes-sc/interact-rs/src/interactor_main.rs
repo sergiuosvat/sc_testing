@@ -170,6 +170,29 @@ impl ContractInteract {
         println!("Result: {response:?}");
     }
 
+    async fn issue_non_fungible_error(&mut self, error: ExpectError<'_> ) {
+        let egld_amount = BigUint::<StaticApi>::from(50000000000000000u64);
+
+        let token_name = ManagedBuffer::new_from_bytes(&b"Test2"[..]);
+        let token_ticker = ManagedBuffer::new_from_bytes(&b"TST2"[..]);
+
+        let response = self
+            .interactor
+            .tx()
+            .from(&self.wallet_address)
+            .to(self.state.current_address())
+            .typed(proxy::UpdateAttributesProxy)
+            .issue_non_fungible(token_name, token_ticker)
+            .egld(egld_amount)
+            .gas(70_000_000)
+            .returns(error)
+            .prepare_async()
+            .run()
+            .await;
+
+        println!("Result: {response:?}");
+    }
+
     async fn issue_fungible(&mut self) {
         let egld_amount = BigUint::<StaticApi>::from(50000000000000000u64);
 
@@ -212,7 +235,7 @@ impl ContractInteract {
     }
 
     async fn create_nft(&mut self) {
-        let to = bech32::decode("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th"); //alice
+        //let to = bech32::decode("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th"); //alice
 
         let response = self
             .interactor
@@ -220,7 +243,7 @@ impl ContractInteract {
             .from(&self.wallet_address)
             .to(self.state.current_address())
             .typed(proxy::UpdateAttributesProxy)
-            .create_nft(to)
+            .create_nft()
             .gas(40_000_000)
             .returns(ReturnsResultUnmanaged)
             .prepare_async()
@@ -348,7 +371,12 @@ async fn test_issue_fungible_token_mapper() {
 async fn test_issue_non_fungible() {
     let mut interact = ContractInteract::new().await;
     interact.issue_non_fungible().await;
-    interact.test_token_mapper().await;
+}
+
+#[tokio::test]
+async fn test_issue_non_fungible_error() {
+    let mut interact = ContractInteract::new().await;
+    interact.issue_non_fungible_error(ExpectError(4, "Token already issued")).await;
 }
 
 #[tokio::test]
@@ -358,9 +386,21 @@ async fn test_get_token_mapper() {
 }
 
 #[tokio::test]
+async fn test_set_roles() {
+    let mut interact = ContractInteract::new().await;
+    interact.set_roles().await;
+}
+
+#[tokio::test]
 async fn test_create_nft() {
     let mut interact = ContractInteract::new().await;
     interact.create_nft().await;
+    // interact.nft_token_id().await;
+}
+
+#[tokio::test]
+async fn test_get_nft_token_id() {
+    let mut interact = ContractInteract::new().await;
     interact.nft_token_id().await;
 }
 

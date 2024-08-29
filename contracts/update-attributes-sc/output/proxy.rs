@@ -138,16 +138,12 @@ where
             .original_result()
     }
 
-    pub fn create_nft<
-        Arg0: ProxyArg<ManagedAddress<Env::Api>>,
-    >(
+    pub fn create_nft(
         self,
-        to: Arg0,
     ) -> TxTypedCall<Env, From, To, NotPayable, Gas, ()> {
         self.wrapped_tx
             .payment(NotPayable)
             .raw_call("create_nft")
-            .argument(&to)
             .original_result()
     }
 

@@ -1,11 +1,11 @@
 {
     "buildInfo": {
         "rustc": {
-            "version": "1.80.1",
-            "commitHash": "3f5fd8dd41153bc5fdca9427e9e05be2c767ba23",
-            "commitDate": "2024-08-06",
+            "version": "1.79.0",
+            "commitHash": "129f3b9964af4d4a709d1383930ade12dfe7c081",
+            "commitDate": "2024-06-10",
             "channel": "Stable",
-            "short": "rustc 1.80.1 (3f5fd8dd4 2024-08-06)"
+            "short": "rustc 1.79.0 (129f3b996 2024-06-10)"
         },
         "contractCrate": {
             "name": "update-attributes",
@@ -13,7 +13,7 @@
         },
         "framework": {
             "name": "multiversx-sc",
-            "version": "0.50.5"
+            "version": "0.52.3"
         }
     },
     "docs": [
@@ -96,12 +96,7 @@
         {
             "name": "create_nft",
             "mutability": "mutable",
-            "inputs": [
-                {
-                    "name": "to",
-                    "type": "Address"
-                }
-            ],
+            "inputs": [],
             "outputs": []
         },
         {

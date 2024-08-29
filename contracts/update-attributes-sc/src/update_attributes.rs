@@ -114,8 +114,8 @@ pub trait UpdateAttributes:
     }
 
     #[endpoint]
-    fn create_nft(&self, to: ManagedAddress) {
-        let nonce = self.send().esdt_nft_create(
+    fn create_nft(&self) {
+        self.send().esdt_nft_create(
             &self.nft_token_id().get(),
             &BigUint::from(1u8),
             &ManagedBuffer::new(),
@@ -125,10 +125,10 @@ pub trait UpdateAttributes:
             &ManagedVec::new(),
         );
 
-        self.tx()
-            .to(to)
-            .single_esdt(&self.nft_token_id().get(), nonce, &BigUint::from(1u64))
-            .transfer_execute();
+        // self.tx()
+        //     .to(to)
+        //     .single_esdt(&self.nft_token_id().get(), nonce, &BigUint::from(1u64))
+        //     .transfer_execute();
     }
 
     #[payable("*")]

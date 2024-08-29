@@ -1,0 +1,82 @@
+====================================
+Running test: test_create_nft
+====================================
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/interactor_main.rs (/home/sergiuosvat/workspace/Internship MultiversX/sc_testing/target/debug/deps/rust_interact_update_attributes_sc-e0b0a8724e4922e6)
+
+running 1 test
+sender's recalled nonce: 5385
+-- tx nonce: 5385
+sc call tx hash: 23fef2782fc3ee2435f9db0fb018f5e2fe8c1cf4a33de5708f17beb66ea63947
+thread 'test_create_nft' panicked at /home/sergiuosvat/.cargo/registry/src/index.crates.io-6f17d22bba15001f/multiversx-sc-scenario-0.52.3/src/scenario/model/transaction/tx_expect.rs:102:9:
+result code mismatch. Want: "0". Have: 4. Message: wrong number of arguments
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test test_create_nft ... FAILED
+
+failures:
+
+failures:
+    test_create_nft
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 10 filtered out; finished in 3.78s
+
+error: test failed, to rerun pass `--bin rust-interact-update-attributes-sc`
+
+====================================
+Running test: test_deploy
+====================================
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.10s
+     Running unittests src/interactor_main.rs (/home/sergiuosvat/workspace/Internship MultiversX/sc_testing/target/debug/deps/rust_interact_update_attributes_sc-e0b0a8724e4922e6)
+
+running 1 test
+sender's recalled nonce: 5386
+-- tx nonce: 5386
+sc deploy tx hash: 0f2e1a164bc5ee2274b98e0e78022327f5313659baad053c75b36fd191f0a247
+deploy address: erd1qqqqqqqqqqqqqpgqagpmdc7udc0a0dfwvk0cycyr2gzc0snnd8sspuqsgp
+new address: erd1qqqqqqqqqqqqqpgqagpmdc7udc0a0dfwvk0cycyr2gzc0snnd8sspuqsgp
+test test_deploy ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 6.02s
+
+
+====================================
+Running test: test_get_nft_token_id
+====================================
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/interactor_main.rs (/home/sergiuosvat/workspace/Internship MultiversX/sc_testing/target/debug/deps/rust_interact_update_attributes_sc-e0b0a8724e4922e6)
+
+running 1 test
+Result: TokenIdentifier("")
+test test_get_nft_token_id ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.20s
+
+
+====================================
+Running test: test_get_token_mapper
+====================================
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/interactor_main.rs (/home/sergiuosvat/workspace/Internship MultiversX/sc_testing/target/debug/deps/rust_interact_update_attributes_sc-e0b0a8724e4922e6)
+
+running 1 test
+Result: TokenIdentifier("")
+test test_get_token_mapper ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 10 filtered out; finished in 0.19s
+
+
+====================================
+Running test: test_issue_fungible
+====================================
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.08s
+     Running unittests src/interactor_main.rs (/home/sergiuosvat/workspace/Internship MultiversX/sc_testing/target/debug/deps/rust_interact_update_attributes_sc-e0b0a8724e4922e6)
+
+running 2 tests
+sender's recalled nonce: 5387
+-- tx nonce: 5387
+sender's recalled nonce: 5387
+-- tx nonce: 5387
+sc call tx hash: 2dc73070efd2f979c20ca2cfad93d2cbaeb2986d29b2acf09dabb75c0ab25e6f
+sc call tx hash: b53dde4c287d34e27acdc527ec7be725f1dc96e310f27521b40431a35248df60
+Result: ()
+test test_issue_fungible_token_mapper ... ok

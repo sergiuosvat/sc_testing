@@ -12,6 +12,9 @@ use std::{
 
 const GATEWAY: &str = sdk::gateway::DEVNET_GATEWAY;
 const STATE_FILE: &str = "state.toml";
+const TOKEN_ID: &str = "BSK-476470";
+const FEE_AMOUNT: u64 = 50000000000000000; // 0.05
+const FEE_AMOUNT_2: u64 = 300000000000000000; // 0.03
 
 #[tokio::main]
 async fn main() {
@@ -115,13 +118,14 @@ impl ContractInteract {
     }
 
     async fn deploy(&mut self) {
-        let admins = MultiValueVec::from(vec![bech32::decode("")]);
+        let admin = Bech32Address::from_bech32_string("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th".to_string());
+        let admins = MultiValueVec::from(vec![admin.clone()]);
 
         let new_address = self
             .interactor
             .tx()
             .from(&self.wallet_address)
-            .gas(30_000_000u64)
+            .gas(50_000_000u64)
             .typed(proxy::PotlockProxy)
             .init(admins)
             .code(&self.contract_code)
@@ -157,15 +161,15 @@ impl ContractInteract {
     }
 
     async fn change_fee_for_pots(&mut self) {
-        let token_identifier = TokenIdentifier::from_esdt_bytes(&b""[..]);
-        let fee = BigUint::<StaticApi>::from(0u128);
+        let token_identifier = TokenIdentifier::from_esdt_bytes(TOKEN_ID);
+        let fee = BigUint::<StaticApi>::from(FEE_AMOUNT);
 
         let response = self
             .interactor
             .tx()
             .from(&self.wallet_address)
             .to(self.state.current_address())
-            .gas(30_000_000u64)
+            .gas(50_000_000u64)
             .typed(proxy::PotlockProxy)
             .change_fee_for_pots(token_identifier, fee)
             .returns(ReturnsResultUnmanaged)
@@ -294,27 +298,57 @@ impl ContractInteract {
     }
 
     async fn add_pot(&mut self) {
-        let token_id = String::new();
+        let pot_proposer = Bech32Address::from_bech32_string("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th".to_string());
+        let token_id = TokenIdentifier::from_esdt_bytes(TOKEN_ID);
         let token_nonce = 0u64;
-        let token_amount = BigUint::<StaticApi>::from(0u128);
+        let token_amount = BigUint::<StaticApi>::from(FEE_AMOUNT);
 
-        let name = ManagedBuffer::new_from_bytes(&b""[..]);
-        let description = ManagedBuffer::new_from_bytes(&b""[..]);
+        let description = ManagedBuffer::new_from_bytes(b"Pot used for testing");
+        let name = ManagedBuffer::new_from_bytes(b"My Pot");
 
         let response = self
             .interactor
             .tx()
-            .from(&self.wallet_address)
+            .from(pot_proposer)
             .to(self.state.current_address())
             .gas(30_000_000u64)
             .typed(proxy::PotlockProxy)
             .add_pot(name, description)
             .payment((
-                TokenIdentifier::from(token_id.as_str()),
+                TokenIdentifier::from(token_id),
                 token_nonce,
                 token_amount,
             ))
             .returns(ReturnsResultUnmanaged)
+            .prepare_async()
+            .run()
+            .await;
+
+        println!("Result: {response:?}");
+    }
+
+    async fn add_pot_params(&mut self, token_id: &str, fee: u64, error:ExpectError<'_>){
+        let pot_proposer = Bech32Address::from_bech32_string("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th".to_string());
+        let token_nonce = 0u64;
+        let token_amount = BigUint::<StaticApi>::from(fee);
+
+        let description = ManagedBuffer::new_from_bytes(b"Pot used for testing");
+        let name = ManagedBuffer::new_from_bytes(b"My Pot");
+
+        let response = self
+            .interactor
+            .tx()
+            .from(pot_proposer)
+            .to(self.state.current_address())
+            .gas(30_000_000u64)
+            .typed(proxy::PotlockProxy)
+            .add_pot(name, description)
+            .payment((
+                TokenIdentifier::from(token_id),
+                token_nonce,
+                token_amount,
+            ))
+            .returns(error)
             .prepare_async()
             .run()
             .await;
@@ -344,11 +378,11 @@ impl ContractInteract {
     }
 
     async fn donate_to_pot(&mut self) {
-        let token_id = String::new();
+        let token_id = TokenIdentifier::from_esdt_bytes(TOKEN_ID);
         let token_nonce = 0u64;
-        let token_amount = BigUint::<StaticApi>::from(0u128);
+        let token_amount = BigUint::<StaticApi>::from(3 * FEE_AMOUNT);
 
-        let potlock_id = 0u32;
+        let potlock_id = 1u32;
 
         let response = self
             .interactor
@@ -359,7 +393,7 @@ impl ContractInteract {
             .typed(proxy::PotlockProxy)
             .donate_to_pot(potlock_id)
             .payment((
-                TokenIdentifier::from(token_id.as_str()),
+                TokenIdentifier::from(token_id),
                 token_nonce,
                 token_amount,
             ))
@@ -460,7 +494,7 @@ impl ContractInteract {
     }
 
     async fn pot_donations(&mut self) {
-        let potlock_id = 0u32;
+        let potlock_id = 1u32;
 
         let result_value = self
             .interactor
@@ -562,4 +596,63 @@ impl ContractInteract {
 
         println!("Result: {result_value:?}");
     }
+}
+
+#[tokio::test]
+async fn test_deploy() {
+    let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    interact.change_fee_for_pots().await;
+}
+
+#[tokio::test]
+async fn test_view_potlocks() {
+    let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    interact.change_fee_for_pots().await;
+
+    interact.add_pot().await;
+    interact.potlocks().await;
+}
+
+#[tokio::test]
+async fn test_change_fee() {
+    let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
+    interact.fee_amount().await;
+    interact.change_fee_for_pots().await;
+    interact.fee_amount().await;
+}
+
+#[tokio::test]
+async fn test_add_pot_params(){
+    let mut interact = ContractInteract::new().await;
+
+    interact.deploy().await;
+    interact.change_fee_for_pots().await;
+
+    let token_id = "ALICE";
+    interact.add_pot_params(
+        token_id,
+        FEE_AMOUNT,
+        ExpectError(4, "Wrong token identifier for creating a pot!")
+    ).await;
+
+    interact.add_pot_params(
+        TOKEN_ID,
+        FEE_AMOUNT_2,
+        ExpectError(4, "Wrong fee amount for creating a pot")
+    ).await;
+}
+
+
+#[tokio::test]
+async fn test_multiple_donations() {
+    let mut interact = ContractInteract::new().await;
+    interact.donate_to_pot().await;
+    interact.pot_donations().await;
+    interact.donate_to_pot().await;
+    interact.pot_donations().await;
+    interact.donate_to_pot().await;
+    interact.pot_donations().await;
 }
