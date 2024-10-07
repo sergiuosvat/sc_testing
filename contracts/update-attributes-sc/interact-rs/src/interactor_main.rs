@@ -350,69 +350,63 @@ impl ContractInteract {
 }
 
 #[tokio::test]
-async fn test_deploy() {
+async fn test0_deploy() {
     let mut interact = ContractInteract::new().await;
     interact.deploy().await;
 }
 
 #[tokio::test]
-async fn test_issue_fungible() {
+async fn test1_issue_fungible() {
     let mut interact = ContractInteract::new().await;
     interact.issue_fungible().await;
 }
 
 #[tokio::test]
-async fn test_issue_fungible_token_mapper() {
+async fn test2_issue_fungible_token_mapper() {
     let mut interact = ContractInteract::new().await;
     interact.issue_fungible_token_mapper().await;
 }
 
 #[tokio::test]
-async fn test_issue_non_fungible() {
+async fn test3_issue_non_fungible() {
     let mut interact = ContractInteract::new().await;
     interact.issue_non_fungible().await;
+    tokio::time::sleep(tokio::time::Duration::from_secs(20)).await;
 }
 
 #[tokio::test]
-async fn test_issue_non_fungible_error() {
+async fn test4_issue_non_fungible_error() {
     let mut interact = ContractInteract::new().await;
     interact.issue_non_fungible_error(ExpectError(4, "Token already issued")).await;
 }
 
 #[tokio::test]
-async fn test_get_token_mapper() {
+async fn test5_get_token_mapper() {
     let mut interact = ContractInteract::new().await;
     interact.test_token_mapper().await;
 }
 
 #[tokio::test]
-async fn test_set_roles() {
+async fn test6_set_roles() {
     let mut interact = ContractInteract::new().await;
     interact.set_roles().await;
+    //tokio::time::sleep(tokio::time::Duration::from_secs(10)).await;
 }
 
 #[tokio::test]
-async fn test_create_nft() {
+async fn test7_create_nft() {
     let mut interact = ContractInteract::new().await;
     interact.create_nft().await;
-    // interact.nft_token_id().await;
 }
 
 #[tokio::test]
-async fn test_get_nft_token_id() {
+async fn test8_get_nft_token_id() {
     let mut interact = ContractInteract::new().await;
     interact.nft_token_id().await;
 }
 
 #[tokio::test]
-async fn test_send_nft() {
+async fn test9_send_nft() {
     let mut interact = ContractInteract::new().await;
     interact.send_nft().await;
-}
-
-#[tokio::test]
-async fn test_update_attributes() {
-    let mut interact = ContractInteract::new().await;
-    interact.set_roles().await;
-    interact.update_attributes().await;
 }

@@ -2,3 +2,7 @@
 [[proxy]]
 path = "interact-rs/src/proxy.rs"
  
+
+[[proxy]]
+path = "interactor/src/proxy.rs"
+ 

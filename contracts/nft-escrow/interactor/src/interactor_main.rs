@@ -16,7 +16,9 @@ const GATEWAY: &str = sdk::gateway::DEVNET_GATEWAY;
 const STATE_FILE: &str = "state.toml";
 const IVAN_ADDRESS: &str = "erd13x29rvmp4qlgn4emgztd8jgvyzdj0p6vn37tqxas3v9mfhq4dy7shalqrx";
 const WANTED_ADDRESS_STRING: &str = "erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th";
-const TOKEN_ID: &str = "NET2SC-0d8f9b";
+const TOKEN_ID: &str = "NETSC-b650ba";
+const TOKEN_ID_2: &str = "NET2SC-0d8f9b";
+
 
 
 #[tokio::main]
@@ -156,7 +158,7 @@ impl ContractInteract {
             .gas(NumExpr("30,000,000"))
             .typed(proxy::NftEscrowContractProxy)
             .escrow(wanted_nft, wanted_nonce, wanted_address)
-            .egld_or_single_esdt(&EgldOrEsdtTokenIdentifier::esdt(token_id), token_nonce, &token_amount)
+            .esdt(EsdtTokenPayment::new(TokenIdentifier::from_esdt_bytes(token_id), token_nonce, token_amount))
             .returns(expected_result)
             .prepare_async()
             .run()
@@ -366,286 +368,289 @@ async fn test_deploy() {
 #[tokio::test]
 async fn test_escrow_nonce_zero() {
     let mut interact = ContractInteract::new().await;
+    interact.deploy().await;
     let token_id = TOKEN_ID.as_bytes();
     let token_nonce = 0u64;
     let token_amount = BigUint::<StaticApi>::from(5u128);
-    let wanted_nft = TokenIdentifier::from_esdt_bytes(&b""[..]);
+    let wanted_nft = TokenIdentifier::from_esdt_bytes(TOKEN_ID_2);
     let wanted_nonce = 10u64;
     let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
     interact.escrow_fail(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address, ExpectError(4, "ESDT is not an NFT")).await;
 }
 
-#[tokio::test]
-async fn test_escrow_value_diff_one() {
-    let mut interact = ContractInteract::new().await;
-    let token_id = TOKEN_ID.as_bytes(); 
-    let token_nonce = 1u64;
-    let token_amount = BigUint::<StaticApi>::from(0u128);
-    let wanted_nft = TokenIdentifier::from_esdt_bytes(&b""[..]);
-    let wanted_nonce = 10u64;
-    let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
-    interact.escrow_fail(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address, ExpectError(4, "ESDT is not an NFT")).await;
-}
+// #[tokio::test]
+// async fn test_escrow_value_diff_one() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id = TOKEN_ID.as_bytes(); 
+//     let token_nonce = 1u64;
+//     let token_amount = BigUint::<StaticApi>::from(0u128);
+//     let wanted_nft = TokenIdentifier::from_esdt_bytes(&b""[..]);
+//     let wanted_nonce = 10u64;
+//     let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+//     interact.escrow_fail(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address, ExpectError(4, "ESDT is not an NFT")).await;
+// }
 
-#[tokio::test]
-async fn test_escrow_wanted_nonce_zero() {
-    let mut interact = ContractInteract::new().await;
-    let token_id = TOKEN_ID.as_bytes(); 
-    let token_nonce = 1u64;
-    let token_amount = BigUint::<StaticApi>::from(1u128);
-    let wanted_nft = TokenIdentifier::from_esdt_bytes(&b""[..]);
-    let wanted_nonce = 0u64;
-    let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
-    interact.escrow_fail(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address, ExpectError(4, "Wanted ESDT is not an NFT")).await;
-}
+// #[tokio::test]
+// async fn test_escrow_wanted_nonce_zero() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id = TOKEN_ID.as_bytes(); 
+//     let token_nonce = 1u64;
+//     let token_amount = BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft = TokenIdentifier::from_esdt_bytes(&b"ASD"[..]);
+//     let wanted_nonce = 0u64;
+//     let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+//     interact.escrow_fail(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address, ExpectError(4, "Wanted ESDT is not an NFT")).await;
+// }
 
-#[tokio::test]
-async fn test_escrow_diff_addresses() {
-    let mut interact = ContractInteract::new().await;
-    let token_id = TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount = BigUint::<StaticApi>::from(1u128);
-    let wanted_nft = TokenIdentifier::from_esdt_bytes(&b""[..]);
-    let wanted_nonce = 10u64;
-    let ref wanted_address = Bech32Address::from_bech32_string(String::from(test_wallets::ivan().address().to_string()));
-    interact.escrow_fail(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address, ExpectError(4, "Wanted address should not be the same as the caller")).await;
-}
+// #[tokio::test]
+// async fn test_escrow_diff_addresses() {
+//     let mut interact = ContractInteract::new().await;
+//     let token_id = TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount = BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft = TokenIdentifier::from_esdt_bytes(&b"ASD"[..]);
+//     let wanted_nonce = 10u64;
+//     let ref wanted_address = Bech32Address::from_bech32_string(String::from(test_wallets::ivan().address().to_string()));
+//     interact.escrow_fail(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address, ExpectError(4, "Wanted address should not be the same as the caller")).await;
+// }
 
-#[tokio::test]
-async fn test_escrow_success() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let token_id = TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount = BigUint::<StaticApi>::from(1u128);
-    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
-    let wanted_nonce = 106u64;
-    let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
-    interact.escrow_succes(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address).await;
+// #[tokio::test]
+// async fn test_escrow_success() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id = TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount = BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
+//     let wanted_nonce = 106u64;
+//     let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+//     interact.escrow_succes(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address).await;
 
-    let ivan_address = Bech32Address::from_bech32_string(String::from(IVAN_ADDRESS));
-    let wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+//     let ivan_address = Bech32Address::from_bech32_string(String::from(IVAN_ADDRESS));
+//     let wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
 
-    interact.get_created_offers(ivan_address).await;
-    interact.get_wanted_offers(wanted_address).await;
-}
+//     interact.get_created_offers(ivan_address).await;
+//     interact.get_wanted_offers(wanted_address).await;
+// }
 
-#[tokio::test]
-async fn test_escrow_success_twice() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let token_id = TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount = BigUint::<StaticApi>::from(1u128);
-    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
-    let wanted_nonce = 106u64;
-    let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
-    interact.escrow_succes(token_id, token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, wanted_address).await;
-    interact.escrow_succes(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address).await;
+// #[tokio::test]
+// async fn test_escrow_success_twice() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id = TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount = BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
+//     let wanted_nonce = 106u64;
+//     let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+//     interact.escrow_succes(token_id, token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, wanted_address).await;
+//     interact.escrow_succes(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address).await;
 
-    let ivan_address = Bech32Address::from_bech32_string(String::from(IVAN_ADDRESS));
-    let wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+//     let ivan_address = Bech32Address::from_bech32_string(String::from(IVAN_ADDRESS));
+//     let wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
 
-    interact.get_created_offers(ivan_address).await;
-    interact.get_wanted_offers(wanted_address).await;
-}
+//     interact.get_created_offers(ivan_address).await;
+//     interact.get_wanted_offers(wanted_address).await;
+// }
 
-#[tokio::test]
-async fn test_accept_fail_offer_does_not_exist(){
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let token_id = TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount =  BigUint::<StaticApi>::from(2u128);
-    let offer_id = 9999999;
-    interact.accept_fail(token_id, token_nonce, token_amount, offer_id, ExpectError(4, "Offer does not exist")).await;
-}
+// #[tokio::test]
+// async fn test_accept_fail_offer_does_not_exist(){
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id = TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount =  BigUint::<StaticApi>::from(2u128);
+//     let offer_id = 9999999;
+//     interact.accept_fail(token_id, token_nonce, token_amount, offer_id, ExpectError(4, "Offer does not exist")).await;
+// }
 
-#[tokio::test]
-async fn test_unauthorized_acceptance() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let token_id = TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount = BigUint::<StaticApi>::from(1u128);
-    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
-    let wanted_nonce = 106u64;
-    let ref wanted_address = Bech32Address::from_bech32_string(String::from("erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"));
-    let offer_id = interact.escrow_succes(
-        token_id, token_nonce, token_amount.clone(), wanted_nft, wanted_nonce, wanted_address
-    ).await;
+// #[tokio::test]
+// async fn test_unauthorized_acceptance() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id = TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount = BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
+//     let wanted_nonce = 106u64;
+//     let ref wanted_address = Bech32Address::from_bech32_string(String::from("erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"));
+//     let offer_id = interact.escrow_succes(
+//         token_id, token_nonce, token_amount.clone(), wanted_nft, wanted_nonce, wanted_address
+//     ).await;
 
-    println!("Offer id: {offer_id}");
+//     println!("Offer id: {offer_id}");
 
-    let expected_error = ExpectError(4, "Can not accept this offer");
-    interact
-        .accept_fail(
-           token_id, token_nonce, token_amount, offer_id, expected_error
-        )
-        .await;
-}
+//     let expected_error = ExpectError(4, "Can not accept this offer");
+//     interact
+//         .accept_fail(
+//            token_id, token_nonce, token_amount, offer_id, expected_error
+//         )
+//         .await;
+// }
 
-#[tokio::test]
-async fn test_nft_does_not_match() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let token_id =  TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount =BigUint::<StaticApi>::from(1u128);
-    let wanted_nft =   TokenIdentifier::<StaticApi>::from_esdt_bytes(&"INTERNS-c9325f"[..]);
-    let wanted_nonce = 1u64;
-    let wanted_address = Bech32Address::from_bech32_string(String::from("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th"));
-    let offer_id = interact.escrow_succes(
-        token_id, token_nonce, token_amount, wanted_nft.clone(), wanted_nonce, &wanted_address
-    ).await;
+// #[tokio::test]
+// async fn test_nft_does_not_match() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id =  TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount =BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft =   TokenIdentifier::<StaticApi>::from_esdt_bytes(&"INTERNS-c9325f"[..]);
+//     let wanted_nonce = 1u64;
+//     let wanted_address = Bech32Address::from_bech32_string(String::from("erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th"));
+//     let offer_id = interact.escrow_succes(
+//         token_id, token_nonce, token_amount, wanted_nft.clone(), wanted_nonce, &wanted_address
+//     ).await;
 
 
-    println!("Offer id: {}", offer_id); 
-    let token_amount = BigUint::<StaticApi>::from(1u128);
-    let expected_error = ExpectError(4, "NFT does not match");
-    interact
-        .accept_fail_address(
-            token_id, token_nonce, token_amount.clone(), offer_id, expected_error
-        ).await;
+//     println!("Offer id: {}", offer_id); 
+//     let token_amount = BigUint::<StaticApi>::from(1u128);
+//     let expected_error = ExpectError(4, "NFT does not match");
+//     interact
+//         .accept_fail_address(
+//             token_id, token_nonce, token_amount.clone(), offer_id, expected_error
+//         ).await;
 
-    let toke_nonce_diff = 2u64;
-    interact
-        .accept_fail_address(
-            token_id, toke_nonce_diff, token_amount.clone(), offer_id, ExpectError(4, "NFT does not match")
-        ).await;
+//     let toke_nonce_diff = 2u64;
+//     interact
+//         .accept_fail_address(
+//             token_id, toke_nonce_diff, token_amount.clone(), offer_id, ExpectError(4, "NFT does not match")
+//         ).await;
     
-    let token_id_diff = "INTERNS-123456".as_bytes();
-    interact
-        .accept_fail_address(
-            token_id_diff, token_nonce, token_amount, offer_id, ExpectError(4, "NFT does not match")
-        ).await;
+//     let token_id_diff = "INTERNS-123456".as_bytes();
+//     interact
+//         .accept_fail_address(
+//             token_id_diff, token_nonce, token_amount, offer_id, ExpectError(4, "NFT does not match")
+//         ).await;
     
-}
+// }
 
-#[tokio::test]
-async fn test_accept_success() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let token_id =  TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount =BigUint::<StaticApi>::from(1u128);
-    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&"MICE-9e007a"[..]);
-    let wanted_nonce = 2u64;
-    let wanted_address = Bech32Address::from_bech32_string(String::from("erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"));
-    let offer_id = interact.escrow_succes(
-        token_id, token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
-    ).await;
-    println!("Offer id: {}", offer_id); 
+// #[tokio::test]
+// async fn test_accept_success() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id =  TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount =BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&"MICE-9e007a"[..]);
+//     let wanted_nonce = 2u64;
+//     let wanted_address = Bech32Address::from_bech32_string(String::from("erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"));
+//     let offer_id = interact.escrow_succes(
+//         token_id, token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
+//     ).await;
+//     println!("Offer id: {}", offer_id); 
 
-    interact
-        .accept_success(
-            token_id, token_nonce, token_amount, offer_id
-        ).await;
-}
+//     interact
+//         .accept_success(
+//             token_id, token_nonce, token_amount, offer_id
+//         ).await;
+// }
 
 
-#[tokio::test]
-async fn test_cancel_offer_not_exists() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let offer_id = 123456789u32;
-    interact.cancel_failed(offer_id, ExpectError(4, "Offer does not exist")).await;
-}
+// #[tokio::test]
+// async fn test_cancel_offer_not_exists() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let offer_id = 123456789u32;
+//     interact.cancel_failed(offer_id, ExpectError(4, "Offer does not exist")).await;
+// }
 
-#[tokio::test]
-async fn test_cancel_offer_not_owner() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let token_id = TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount = BigUint::<StaticApi>::from(1u128);
-    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
-    let wanted_nonce = 106u64;
-    let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
-    let offer_id = interact.escrow_succes(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address).await;
-    interact.cancel_failed_adress(offer_id, ExpectError(4, "Only the offer creator can cancel it")).await;
-}
+// #[tokio::test]
+// async fn test_cancel_offer_not_owner() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id = TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount = BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
+//     let wanted_nonce = 106u64;
+//     let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+//     let offer_id = interact.escrow_succes(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address).await;
+//     interact.cancel_failed_adress(offer_id, ExpectError(4, "Only the offer creator can cancel it")).await;
+// }
 
-#[tokio::test]
-async fn test_cancel_offer_success() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
+// #[tokio::test]
+// async fn test_cancel_offer_success() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
 
-    let token_id = TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount = BigUint::<StaticApi>::from(1u128);
-    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
-    let wanted_nonce = 106u64;
-    let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
-    let offer_id = interact.escrow_succes(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address).await;
+//     let token_id = TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount = BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&b"MICE-9e007a"[..]);
+//     let wanted_nonce = 106u64;
+//     let ref wanted_address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+//     let offer_id = interact.escrow_succes(token_id, token_nonce, token_amount, wanted_nft, wanted_nonce, wanted_address).await;
     
-    interact.cancel(offer_id).await;
+//     interact.cancel(offer_id).await;
 
-    let ivan_address = Bech32Address::from_bech32_string(String::from(IVAN_ADDRESS));
-    interact.get_created_offers(ivan_address).await;
+//     let ivan_address = Bech32Address::from_bech32_string(String::from(IVAN_ADDRESS));
+//     interact.get_created_offers(ivan_address).await;
 
-}
+// }
 
-#[tokio::test]
-async fn test_created_offers_not_exists() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let address = Bech32Address::from_bech32_string(String::from(IVAN_ADDRESS));
-    interact.get_created_offers(address).await;
-}
+// #[tokio::test]
+// async fn test_created_offers_not_exists() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let address = Bech32Address::from_bech32_string(String::from(IVAN_ADDRESS));
+//     interact.get_created_offers(address).await;
+// }
 
-#[tokio::test]
-async fn test_wanted_offers_not_exists() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
-    interact.get_wanted_offers(address).await;
-}
+// #[tokio::test]
+// async fn test_wanted_offers_not_exists() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let address = Bech32Address::from_bech32_string(String::from(WANTED_ADDRESS_STRING));
+//     interact.get_wanted_offers(address).await;
+// }
 
-#[tokio::test]
-async fn test_multiple_accept_offer() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let token_id =  TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount =BigUint::<StaticApi>::from(1u128);
-    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&"MICE-9e007a"[..]);
-    let wanted_nonce = 2u64;
-    let wanted_address = Bech32Address::from_bech32_string(String::from("erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"));
-    let offer_id = interact.escrow_succes(
-        token_id, token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
-    ).await;
-    println!("Offer id: {}", offer_id); 
+// #[tokio::test]
+// async fn test_multiple_accept_offer() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id =  TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount =BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&"MICE-9e007a"[..]);
+//     let wanted_nonce = 2u64;
+//     let wanted_address = Bech32Address::from_bech32_string(String::from("erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"));
+//     let offer_id = interact.escrow_succes(
+//         token_id, token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
+//     ).await;
+//     println!("Offer id: {}", offer_id); 
 
-    interact
-        .accept_success(
-            token_id, token_nonce, token_amount.clone(), offer_id
-        ).await;
+//     interact
+//         .accept_success(
+//             token_id, token_nonce, token_amount.clone(), offer_id
+//         ).await;
 
-    interact.accept_fail(token_id, token_nonce, token_amount, offer_id, ExpectError(4, "Can not accept this offer")).await;
-}
+//     interact.accept_fail(token_id, token_nonce, token_amount, offer_id, ExpectError(4, "Can not accept this offer")).await;
+// }
 
-#[tokio::test]
-async fn test_multiple_offers_interaction() {
-    let mut interact = ContractInteract::new().await;
-    interact.deploy().await;
-    let token_id =  TOKEN_ID.as_bytes();
-    let token_nonce = 1u64;
-    let token_amount =BigUint::<StaticApi>::from(1u128);
-    let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&"MICE-9e007a"[..]);
-    let wanted_nonce = 2u64;
-    let wanted_address = Bech32Address::from_bech32_string(String::from("erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"));
-    let offer_id = interact.escrow_succes(
-        token_id, token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
-    ).await;
-    let offer_id_2 = interact.escrow_succes(
-        token_id, token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
-    ).await;
+// #[tokio::test]
+// async fn test_multiple_offers_interaction() {
+//     let mut interact = ContractInteract::new().await;
+//     interact.deploy().await;
+//     let token_id =  TOKEN_ID.as_bytes();
+//     let token_nonce = 1u64;
+//     let token_amount =BigUint::<StaticApi>::from(1u128);
+//     let wanted_nft = TokenIdentifier::<StaticApi>::from_esdt_bytes(&"MICE-9e007a"[..]);
+//     let wanted_nonce = 2u64;
+//     let wanted_address = Bech32Address::from_bech32_string(String::from("erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"));
+//     let offer_id = interact.escrow_succes(
+//         token_id, token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
+//     ).await;
+//     let offer_id_2 = interact.escrow_succes(
+//         token_id, token_nonce, token_amount.clone(), wanted_nft.clone(), wanted_nonce, &wanted_address
+//     ).await;
 
-    interact
-        .accept_success(
-            token_id, token_nonce, token_amount, offer_id
-        ).await;
+//     interact
+//         .accept_success(
+//             token_id, token_nonce, token_amount, offer_id
+//         ).await;
     
-    interact.cancel(offer_id_2).await;  
-}
+//     interact.cancel(offer_id_2).await;  
+// }

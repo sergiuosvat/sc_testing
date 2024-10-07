@@ -301,11 +301,3 @@ impl ContractInteract {
     }
 
 }
-
-// #[tokio::test]
-// async fn test_deploy() {
-//     let mut interact = ContractInteract::new().await;
-//     //interact.deploy().await;
-//     interact.set_roles().await;
-//     //interact.start(ExpectError(4, "Invalid burn percentage!")).await;
-// }
